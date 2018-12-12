@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Remove comments as needed to test different parts of the library
 //        StandOutWindow.show(this, MostBasicWindow.class, StandOutWindow.DEFAULT_ID);
-//        StandOutWindow.show(this, SimpleWindow.class, StandOutWindow.DEFAULT_ID);
-        StandOutWindow.show(this, MultiWindow.class, StandOutWindow.DEFAULT_ID);
-        StandOutWindow.show(this, WidgetsWindow.class, StandOutWindow.DEFAULT_ID);
+        StandOutWindow.show(this, SimpleWindow.class, StandOutWindow.DEFAULT_ID);
+//        StandOutWindow.show(this, MultiWindow.class, StandOutWindow.DEFAULT_ID);
+//        StandOutWindow.show(this, WidgetsWindow.class, StandOutWindow.DEFAULT_ID);
 //        FloatingFolder.showFolders(this);
 
         finish();

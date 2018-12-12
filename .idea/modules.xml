@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/StandOut.iml" filepath="$PROJECT_DIR$/StandOut.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/StandOutFork.iml" filepath="$PROJECT_DIR$/.idea/StandOutFork.iml" />
       <module fileurl="file://$PROJECT_DIR$/StandOutLib/StandOutLib.iml" filepath="$PROJECT_DIR$/StandOutLib/StandOutLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
