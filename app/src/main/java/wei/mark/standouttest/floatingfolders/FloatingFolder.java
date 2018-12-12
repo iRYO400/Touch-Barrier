@@ -627,7 +627,7 @@ public final class FloatingFolder extends StandOutWindow {
 								@Override
 								public void run() {
 									StandOutLayoutParams originalParams = getParams(
-											id, window);
+											id, window); //TODO there shouldn't be isLandscape argument
 
 									Drawable drawable = screenshot
 											.getDrawable();

@@ -35,6 +35,7 @@
         </service>
         <service android:name=".floatingfolders.FloatingFolder" >
         </service>
+        <service android:name=".FullScreenWindow" />
 
     </application>
 
