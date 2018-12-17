@@ -480,6 +480,8 @@ public abstract class StandOutWindow extends Service {
      * returned will be reused whenever possible, minimizing the number
      * of times getParams() will be called.
      */
+//    public abstract StandOutLayoutParams getParams(int id, Window window);
+
     public abstract StandOutLayoutParams getParams(int id, Window window);
 
     /**
@@ -679,6 +681,10 @@ public abstract class StandOutWindow extends Service {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        Log.d("DEBUG_TAG", "onConfigurationChanged: getExistingIds() size " + getExistingIds());
+        for (int existingId : getExistingIds()) {
+            showOnConfigurationChanged(existingId);
+        }
         Window.updateScreenSize(this);
     }
 
@@ -1139,6 +1145,17 @@ public abstract class StandOutWindow extends Service {
         focus(id);
 
         return window;
+    }
+
+    public final synchronized Window showOnConfigurationChanged(int id) {
+        Log.d("DEBUG_TAG", "showOnConfigurationChanged: " + id);
+        // get the window corresponding to the id
+        Window cachedWindow = getWindow(id);
+
+        cachedWindow.setLayoutParams(getParams(id, cachedWindow));
+        cachedWindow.edit().commit();
+
+        return cachedWindow;
     }
 
     /**
