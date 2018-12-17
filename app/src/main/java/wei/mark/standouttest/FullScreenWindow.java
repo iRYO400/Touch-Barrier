@@ -1,11 +1,8 @@
 package wei.mark.standouttest;
 
-import android.content.Context;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Handler;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,10 +12,12 @@ import android.widget.LinearLayout;
 import wei.mark.standout.StandOutWindow;
 import wei.mark.standout.ui.Window;
 
+import static wei.mark.standouttest.utils.WindowKeys.MAIN_WINDOW_ID;
+
 public class FullScreenWindow
         extends StandOutWindow {
 
-    public static final int FULL_SCREEN_WINDOW_ID = 0;
+    public static MutableLiveData<Boolean> isShown = new MutableLiveData<>();
 
     @Override
     public String getAppName() {
@@ -29,7 +28,6 @@ public class FullScreenWindow
     public int getAppIcon() {
         return android.R.drawable.ic_menu_close_clear_cancel;
     }
-
 
     @Override
     public void createAndAttachView(int id, FrameLayout frame) {
@@ -48,25 +46,18 @@ public class FullScreenWindow
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        getWindow(FULL_SCREEN_WINDOW_ID).onFocus(false);
+                        getWindow(MAIN_WINDOW_ID).onFocus(false);
                     }
                 }, 1500);
             }
         });
     }
+
     @Override
     public StandOutLayoutParams getParams(int id, Window window) {
-        WindowManager windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        return new StandOutLayoutParams(id, metrics.widthPixels, metrics.heightPixels,
-                StandOutLayoutParams.CENTER, StandOutLayoutParams.CENTER);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
+        return new StandOutLayoutParams(id, WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                StandOutLayoutParams.LEFT, StandOutLayoutParams.TOP);
     }
 
     @Override
@@ -77,5 +68,23 @@ public class FullScreenWindow
     @Override
     public Intent getPersistentNotificationIntent(int id) {
         return StandOutWindow.getCloseIntent(this, FullScreenWindow.class, id);
+    }
+
+    @Override
+    public boolean onShow(int id, Window window) {
+        isShown.setValue(true);
+        return super.onShow(id, window);
+    }
+
+    @Override
+    public boolean onClose(int id, Window window) {
+        isShown.setValue(false);
+        return super.onClose(id, window);
+    }
+
+    @Override
+    public boolean onCloseAll() {
+        isShown.setValue(false);
+        return super.onCloseAll();
     }
 }

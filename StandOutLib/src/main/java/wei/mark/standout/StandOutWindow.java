@@ -45,6 +45,9 @@ import java.util.Set;
 import wei.mark.standout.constants.StandOutFlags;
 import wei.mark.standout.ui.Window;
 
+import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
+import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
+import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
 import static wei.mark.standout.constants.StandOutFlags.FLAG_NOTIFICATION_CHANNEL_ID;
@@ -481,7 +484,6 @@ public abstract class StandOutWindow extends Service {
      * of times getParams() will be called.
      */
 //    public abstract StandOutLayoutParams getParams(int id, Window window);
-
     public abstract StandOutLayoutParams getParams(int id, Window window);
 
     /**
@@ -681,7 +683,6 @@ public abstract class StandOutWindow extends Service {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Log.d("DEBUG_TAG", "onConfigurationChanged: getExistingIds() size " + getExistingIds());
         for (int existingId : getExistingIds()) {
             showOnConfigurationChanged(existingId);
         }
@@ -1123,6 +1124,7 @@ public abstract class StandOutWindow extends Service {
 
         // get the params corresponding to the id
         StandOutLayoutParams params = window.getLayoutParams();
+        params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN; // To show under the Status Bar
 
         try {
             // add the view to the window manager
@@ -1148,7 +1150,6 @@ public abstract class StandOutWindow extends Service {
     }
 
     public final synchronized Window showOnConfigurationChanged(int id) {
-        Log.d("DEBUG_TAG", "showOnConfigurationChanged: " + id);
         // get the window corresponding to the id
         Window cachedWindow = getWindow(id);
 

@@ -1,16 +1,23 @@
 package wei.mark.standouttest.quick_tile;
 
 import android.annotation.TargetApi;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
 import wei.mark.standout.StandOutWindow;
+import wei.mark.standouttest.FullScreenWindow;
 import wei.mark.standouttest.R;
 import wei.mark.standouttest.SimpleWindow;
+
+import static wei.mark.standouttest.utils.WindowKeys.MAIN_WINDOW_ID;
 
 @TargetApi(Build.VERSION_CODES.N)
 public class QuickTilesService
@@ -27,8 +34,8 @@ public class QuickTilesService
     @Override
     public void onTileRemoved() {
         super.onTileRemoved();
-        stopBarrier();
         setLabelByState(Tile.STATE_UNAVAILABLE);
+        stopBarrier();
     }
 
     /**
@@ -37,6 +44,8 @@ public class QuickTilesService
     @Override
     public void onStartListening() {
         super.onStartListening();
+        setLabelByState(FullScreenWindow.isShown.getValue() != null
+                & FullScreenWindow.isShown.getValue() ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
     }
 
     /**
@@ -65,24 +74,26 @@ public class QuickTilesService
     }
 
     private void startBarrier() {
-        StandOutWindow.closeAll(this, SimpleWindow.class);
-        StandOutWindow.show(this, SimpleWindow.class, StandOutWindow.DEFAULT_ID);
+        StandOutWindow.show(this, FullScreenWindow.class, MAIN_WINDOW_ID);
     }
 
     private void stopBarrier() {
-        StandOutWindow.closeAll(this, SimpleWindow.class);
+        StandOutWindow.close(this, FullScreenWindow.class, MAIN_WINDOW_ID);
     }
 
     private void setLabelByState(int state) {
         switch (state) {
             case Tile.STATE_ACTIVE:
                 getQsTile().setIcon(Icon.createWithResource(this, R.drawable.ic_layers_active_24dp));
+                FullScreenWindow.isShown.setValue(true);
                 break;
             case Tile.STATE_INACTIVE:
                 getQsTile().setIcon(Icon.createWithResource(this, R.drawable.ic_layers_inactive_24dp));
+                FullScreenWindow.isShown.setValue(false);
                 break;
             case Tile.STATE_UNAVAILABLE:
                 getQsTile().setIcon(Icon.createWithResource(this, R.drawable.ic_layers_unavailable_24dp));
+                FullScreenWindow.isShown.setValue(false);
                 break;
         }
         getQsTile().setState(state);

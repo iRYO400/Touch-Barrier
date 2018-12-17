@@ -12,6 +12,8 @@ import android.view.View;
 import wei.mark.standout.StandOutWindow;
 import wei.mark.standouttest.floatingfolders.FloatingFolder;
 
+import static wei.mark.standouttest.utils.WindowKeys.MAIN_WINDOW_ID;
+
 public class MainActivity extends AppCompatActivity {
     public final static int REQUEST_CODE = 101;
 
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         // Remove comments as needed to test different parts of the library
 //        StandOutWindow.show(this, MostBasicWindow.class, StandOutWindow.DEFAULT_ID);
 //        StandOutWindow.show(this, SimpleWindow.class, StandOutWindow.DEFAULT_ID);
-        StandOutWindow.show(this, FullScreenWindow.class, FullScreenWindow.FULL_SCREEN_WINDOW_ID);
+        StandOutWindow.show(this, FullScreenWindow.class, MAIN_WINDOW_ID);
 //        StandOutWindow.show(this, MultiWindow.class, StandOutWindow.DEFAULT_ID);
 //        StandOutWindow.show(this, WidgetsWindow.class, StandOutWindow.DEFAULT_ID);
 //        FloatingFolder.showFolders(this);
@@ -54,20 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void toggleImmersiveMode() {
-
-
-//        if (immersiveOff) {
-//            newUiOptions = newUiOptions ^ View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-//            newUiOptions = newUiOptions ^ View.SYSTEM_UI_FLAG_FULLSCREEN;
-//            newUiOptions = newUiOptions ^ View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-//            newUiOptions = newUiOptions ^ View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-//        } else {
-//            newUiOptions = newUiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-//            newUiOptions = newUiOptions | View.SYSTEM_UI_FLAG_FULLSCREEN;
-//            newUiOptions = newUiOptions | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-//            newUiOptions = newUiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-//        }
-
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
