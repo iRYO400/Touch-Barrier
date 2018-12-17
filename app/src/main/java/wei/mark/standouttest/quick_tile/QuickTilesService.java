@@ -18,18 +18,15 @@ public class QuickTilesService
 
     public static final String TAG = "QuickTilesService";
 
-
     @Override
     public void onTileAdded() {
         super.onTileAdded();
-        Log.d(TAG, "onTileAdded: ");
         setLabelByState(Tile.STATE_INACTIVE);
     }
 
     @Override
     public void onTileRemoved() {
         super.onTileRemoved();
-        Log.d(TAG, "onTileRemoved: ");
         stopBarrier();
         setLabelByState(Tile.STATE_UNAVAILABLE);
     }
@@ -40,7 +37,6 @@ public class QuickTilesService
     @Override
     public void onStartListening() {
         super.onStartListening();
-        Log.d(TAG, "onStartListening: ");
     }
 
     /**
@@ -49,13 +45,11 @@ public class QuickTilesService
     @Override
     public void onStopListening() {
         super.onStopListening();
-        Log.d(TAG, "onStopListening: ");
     }
 
     @Override
     public void onClick() {
         super.onClick();
-        Log.d(TAG, "onClick: ");
         if (isLocked()) {
             Toast.makeText(this, "Please, unlock the device.", Toast.LENGTH_SHORT).show();
             return;
