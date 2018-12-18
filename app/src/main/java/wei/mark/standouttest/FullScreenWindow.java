@@ -1,15 +1,24 @@
 package wei.mark.standouttest;
 
+import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
+import android.os.Build;
+import android.os.CountDownTimer;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+
+import com.andrognito.pinlockview.PinLockListener;
+import com.andrognito.pinlockview.PinLockView;
 
 import wei.mark.standout.StandOutWindow;
 import wei.mark.standout.constants.StandOutFlags;
@@ -21,6 +30,7 @@ import static wei.mark.standouttest.utils.WindowKeys.MAIN_WINDOW_ID;
 public class FullScreenWindow
         extends StandOutWindow {
 
+    private static String DEFAULT_PIN = "1996";
     /**
      * If true the window service is started
      */
@@ -29,6 +39,8 @@ public class FullScreenWindow
      * If true the window is invisible
      */
     public static MutableLiveData<Boolean> isHidden = new MutableLiveData<>();
+
+    private final ClearFocusTimer clearFocusTimer = new ClearFocusTimer();
 
     @Override
     public String getAppName() {
@@ -46,14 +58,45 @@ public class FullScreenWindow
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.full_screen, frame, true);
 
+        PinLockView mPinLockView = view.findViewById(R.id.pin_lock_view);
+        mPinLockView.attachIndicatorDots(view.findViewById(R.id.indicator_dots));
+        mPinLockView.setPinLockListener(new PinLockListener() {
+            @Override
+            public void onComplete(String pin) {
+                if (TextUtils.equals(pin, DEFAULT_PIN))
+                    close(getApplicationContext(), FullScreenWindow.class, MAIN_WINDOW_ID);
+            }
+
+            @Override
+            public void onEmpty() {
+
+            }
+
+            @Override
+            public void onPinChange(int pinLength, String intermediatePin) {
+
+            }
+        });
+
         unFocusViewOnClick(view);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private void toggleImmersiveMode() {
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
     private void unFocusViewOnClick(View view) {
-        LinearLayout layout = view.findViewById(R.id.linearLayout);
-        layout.setOnClickListener(
-                v -> new Handler().postDelayed(
-                        () -> getWindow(MAIN_WINDOW_ID).onFocus(false), 1500));
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!clearFocusTimer.isTimerScheduled) {
+                    clearFocusTimer.start();
+                }
+                return false;
+            }
+        });
+        clearFocusTimer.start();
     }
 
     @Override
@@ -127,5 +170,27 @@ public class FullScreenWindow
         isShown.setValue(false);
         isHidden.setValue(true);
         return super.onClose(id, window);
+    }
+
+    public class ClearFocusTimer extends CountDownTimer {
+
+        private static final int DELAY_MILLIS = 2000;
+        private static final int INTERVAL = 1000;
+
+        private boolean isTimerScheduled = false;
+
+        public ClearFocusTimer() {
+            super(DELAY_MILLIS, INTERVAL);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+        }
+
+        @Override
+        public void onFinish() {
+            getWindow(MAIN_WINDOW_ID).onFocus(false);
+            isTimerScheduled = false;
+        }
     }
 }

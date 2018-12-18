@@ -1,29 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00000000"
-        android:orientation="vertical"
+        android:background="#99000000"
         android:padding="8dp">
 
-        <TextView
-            android:id="@+id/textView1"
+        <com.andrognito.pinlockview.IndicatorDots
+            android:id="@+id/indicator_dots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fullscreen Window Example"
-            android:textColor="#ffffff"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView2"
+        <com.andrognito.pinlockview.PinLockView
+            android:id="@+id/pin_lock_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Move me around. Click notification to close."
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
-    </LinearLayout>
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/indicator_dots"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </android.support.constraint.ConstraintLayout>
 </merge>

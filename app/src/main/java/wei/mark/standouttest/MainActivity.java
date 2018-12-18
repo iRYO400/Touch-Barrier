@@ -22,16 +22,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
-            /** if not construct intent to request permission */
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-            /** request permission via start activity for result */
-            startActivityForResult(intent, REQUEST_CODE);
-            return;
-        }
+//        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+//            /** if not construct intent to request permission */
+//            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//                    Uri.parse("package:" + getPackageName()));
+//            /** request permission via start activity for result */
+//            startActivityForResult(intent, REQUEST_CODE);
+//            return;
+//        }
 
-        showOverlay();
+//        showOverlay();
+        toggleImmersiveMode();
+        finish();
     }
 
     private void showOverlay() {
@@ -49,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
 //        StandOutWindow.show(this, WidgetsWindow.class, StandOutWindow.DEFAULT_ID);
 //        FloatingFolder.showFolders(this);
 
-        toggleImmersiveMode();
 
         finish();
     }
