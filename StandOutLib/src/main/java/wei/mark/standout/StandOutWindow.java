@@ -45,9 +45,6 @@ import java.util.Set;
 import wei.mark.standout.constants.StandOutFlags;
 import wei.mark.standout.ui.Window;
 
-import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
-import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
-import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
 import static wei.mark.standout.constants.StandOutFlags.FLAG_NOTIFICATION_CHANNEL_ID;
@@ -85,6 +82,10 @@ public abstract class StandOutWindow extends Service {
      */
     public static final String ACTION_SHOW = "SHOW";
 
+    /**
+     * Intent action: Show a new window in hidden state to the id.
+     */
+    public static final String ACTION_SHOW_INVISIBLE = "SHOW_IN_INVISIBLE";
     /**
      * Intent action: Restore a previously hidden window corresponding to the
      * id. The window should be previously hidden with {@link #ACTION_HIDE}.
@@ -136,6 +137,23 @@ public abstract class StandOutWindow extends Service {
     }
 
     /**
+     * Show a new window in hidden state corresponding to the id, or restore a previously hidden
+     * window.
+     *
+     * @param context A Context of the application package implementing this class.
+     * @param cls     The Service extending {@link StandOutWindow} that will be used
+     *                to create and manage the window.
+     * @param id      The id representing this window. If the id exists, and the
+     *                corresponding window was previously hidden, then that window
+     *                will be restored.
+     * @see #show(int)
+     */
+    public static void showInInvisible(Context context,
+                                       Class<? extends StandOutWindow> cls, int id) {
+        ContextCompat.startForegroundService(context, getShowInInvisibleIntent(context, cls, id));
+    }
+
+    /**
      * Hide the existing window corresponding to the id. To enable the ability
      * to restore this window, make sure you implement
      * {@link #getHiddenNotification(int)}.
@@ -149,7 +167,7 @@ public abstract class StandOutWindow extends Service {
      */
     public static void hide(Context context,
                             Class<? extends StandOutWindow> cls, int id) {
-        context.startService(getHideIntent(context, cls, id));
+        ContextCompat.startForegroundService(context, getHideIntent(context, cls, id));
     }
 
     /**
@@ -164,7 +182,7 @@ public abstract class StandOutWindow extends Service {
      */
     public static void close(Context context,
                              Class<? extends StandOutWindow> cls, int id) {
-        context.startService(getCloseIntent(context, cls, id));
+        ContextCompat.startForegroundService(context, getCloseIntent(context, cls, id));
     }
 
     /**
@@ -177,7 +195,7 @@ public abstract class StandOutWindow extends Service {
      */
     public static void closeAll(Context context,
                                 Class<? extends StandOutWindow> cls) {
-        context.startService(getCloseAllIntent(context, cls));
+        ContextCompat.startForegroundService(context, getCloseAllIntent(context, cls));
     }
 
     /**
@@ -206,7 +224,7 @@ public abstract class StandOutWindow extends Service {
     public static void sendData(Context context,
                                 Class<? extends StandOutWindow> toCls, int toId, int requestCode,
                                 Bundle data, Class<? extends StandOutWindow> fromCls, int fromId) {
-        context.startService(getSendDataIntent(context, toCls, toId,
+        ContextCompat.startForegroundService(context, getSendDataIntent(context, toCls, toId,
                 requestCode, data, fromCls, fromId));
     }
 
@@ -226,6 +244,15 @@ public abstract class StandOutWindow extends Service {
                                        Class<? extends StandOutWindow> cls, int id) {
         boolean cached = sWindowCache.isCached(id, cls);
         String action = cached ? ACTION_RESTORE : ACTION_SHOW;
+        Uri uri = cached ? Uri.parse("standout://" + cls + '/' + id) : null;
+        return new Intent(context, cls).putExtra("id", id).setAction(action)
+                .setData(uri);
+    }
+
+    public static Intent getShowInInvisibleIntent(Context context,
+                                                  Class<? extends StandOutWindow> cls, int id) {
+        boolean cached = sWindowCache.isCached(id, cls);
+        String action = cached ? ACTION_RESTORE : ACTION_SHOW_INVISIBLE;
         Uri uri = cached ? Uri.parse("standout://" + cls + '/' + id) : null;
         return new Intent(context, cls).putExtra("id", id).setAction(action)
                 .setData(uri);
@@ -373,7 +400,7 @@ public abstract class StandOutWindow extends Service {
                 FLAG_NOTIFICATION_CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT
         );
-        channel.enableLights(true);
+        channel.enableLights(false);
         mNotificationManager.createNotificationChannel(channel);
     }
 
@@ -395,6 +422,8 @@ public abstract class StandOutWindow extends Service {
 
             if (ACTION_SHOW.equals(action) || ACTION_RESTORE.equals(action)) {
                 show(id);
+            } else if (ACTION_SHOW_INVISIBLE.equals(action)) {
+                showInInvisible(id);
             } else if (ACTION_HIDE.equals(action)) {
                 hide(id);
             } else if (ACTION_TOGGLE_VIS.equals(action)) {
@@ -644,7 +673,6 @@ public abstract class StandOutWindow extends Service {
         // http://developer.android.com/guide/topics/ui/notifiers/notifications.html
         int icon = getAppIcon();
         long when = System.currentTimeMillis();
-        Context c = getApplicationContext();
         String contentTitle = getPersistentNotificationTitle(id);
         String contentText = getPersistentNotificationMessage(id);
         String tickerText = String.format("%s: %s", contentTitle, contentText);
@@ -677,7 +705,29 @@ public abstract class StandOutWindow extends Service {
         if (rv != null)
             nb.setContent(rv);
 
+        NotificationCompat.Action actionCLose = getCloseAction(id);
+        if (actionCLose != null)
+            nb.addAction(actionCLose);
+        NotificationCompat.Action actionToggle = getToggleAction(id);
+        if (actionToggle != null)
+            nb.addAction(actionToggle);
+        NotificationCompat.Action actionSettings = getSettingsAction();
+        if (actionSettings != null)
+            nb.addAction(actionSettings);
+
         return nb.build();
+    }
+
+    public NotificationCompat.Action getSettingsAction() {
+        return null;
+    }
+
+    public NotificationCompat.Action getToggleAction(int id) {
+        return null;
+    }
+
+    public NotificationCompat.Action getCloseAction(int id) {
+        return null;
     }
 
     @Override
@@ -1085,6 +1135,16 @@ public abstract class StandOutWindow extends Service {
         }
     }
 
+    public final synchronized Window showOnConfigurationChanged(int id) {
+        // get the window corresponding to the id
+        Window cachedWindow = getWindow(id);
+
+        cachedWindow.setLayoutParams(getParams(id, cachedWindow));
+        cachedWindow.edit().commit();
+
+        return cachedWindow;
+    }
+
     /**
      * Show or restore a window corresponding to the id. Return the window that
      * was shown/restored.
@@ -1149,14 +1209,28 @@ public abstract class StandOutWindow extends Service {
         return window;
     }
 
-    public final synchronized Window showOnConfigurationChanged(int id) {
+    public final synchronized Window showInInvisible(int id) {
         // get the window corresponding to the id
         Window cachedWindow = getWindow(id);
+        final Window window;
 
-        cachedWindow.setLayoutParams(getParams(id, cachedWindow));
-        cachedWindow.edit().commit();
+        // check cache first
+        if (cachedWindow != null) {
+            window = cachedWindow;
+        } else {
+            window = new Window(this, id);
+        }
+        window.visibility = Window.VISIBILITY_GONE;
 
-        return cachedWindow;
+        // add view to internal map
+        sWindowCache.putCache(id, getClass(), window);
+
+        // get the persistent notification
+        updatePersistentNotification(id);
+
+        focus(id);
+
+        return window;
     }
 
     /**
@@ -1285,6 +1359,20 @@ public abstract class StandOutWindow extends Service {
         mNotificationManager.cancel(getClass().hashCode() + id);
 
         unfocus(window);
+
+        if (window.visibility == Window.VISIBILITY_GONE) {
+            // remove view from internal map
+            sWindowCache.removeCache(id, getClass());
+
+            // if we just released the last window, quit
+            if (sWindowCache.getCacheSize(getClass()) == 0) {
+                // tell Android to remove the persistent notification
+                // the Service will be shutdown by the system on low memory
+                startedForeground = false;
+                stopForeground(true);
+            }
+            return;
+        }
 
         window.visibility = Window.VISIBILITY_TRANSITION;
 

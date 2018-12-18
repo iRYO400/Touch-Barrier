@@ -217,5 +217,6 @@ public class StandOutFlags {
 	public static final int FLAG_ADD_FUNCTIONALITY_DROP_DOWN_DISABLE = 1 << flag_bit++;
 
 	public static final String FLAG_NOTIFICATION_CHANNEL_ID = "wei.mark.standout.default";
+
 	public static final String FLAG_NOTIFICATION_CHANNEL_NAME = "StandOut Library";
 }

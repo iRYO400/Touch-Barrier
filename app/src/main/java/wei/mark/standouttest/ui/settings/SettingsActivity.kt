@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.orhanobut.hawk.Hawk
 import kotlinx.android.synthetic.main.activity_settings.*
 import wei.mark.standout.StandOutWindow
@@ -40,14 +41,22 @@ class SettingsActivity : AppCompatActivity() {
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
+            Log.d("DEBUG_TAG", "switchBarrier $isChecked")
             if (isChecked)
-                startBarrier()
+                showVisibleBarrier()
             else
-                stopBarrier()
+                closeBarrier()
         }
 
         switch_notify_bar.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (!buttonView!!.isPressed)
+                return@setOnCheckedChangeListener
 
+            Log.d("DEBUG_TAG", "switchNotifyBar $isChecked")
+            if (isChecked)
+                showInvisibleBarrier()
+            else
+                closeBarrier()
         }
 
         switch_quick_settings.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -65,6 +74,10 @@ class SettingsActivity : AppCompatActivity() {
             else
                 Hawk.put(CLOSE_ON_ACTIVE, false)
         }
+
+        button2.setOnClickListener {
+            switch_barrier.isChecked = !switch_barrier.isChecked
+        }
     }
 
     private fun setObservers() {
@@ -74,12 +87,19 @@ class SettingsActivity : AppCompatActivity() {
                 boolRef = false
 
             switch_barrier.isChecked = boolRef
+            switch_notify_bar.isChecked = boolRef
+        })
+
+        FullScreenWindow.isHidden.observe(this, Observer {
+            var bool = it
+            if (bool == null)
+                bool = false
+
+            switch_barrier.isChecked = !bool
         })
     }
 
-    private fun startBarrier() {
-
-
+    private fun showVisibleBarrier() {
         StandOutWindow.show(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
 
         if (Hawk.contains(CLOSE_ON_ACTIVE))
@@ -87,8 +107,14 @@ class SettingsActivity : AppCompatActivity() {
                 finish()
     }
 
-    private fun stopBarrier() {
-        StandOutWindow.close(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
+    private fun showInvisibleBarrier() {
+        if (isWindowServiceActive())
+            StandOutWindow.showInInvisible(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
+    }
+
+    private fun closeBarrier() {
+        if (isWindowServiceActive())
+            StandOutWindow.close(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -104,6 +130,11 @@ class SettingsActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun isWindowServiceActive(): Boolean {
+        return (FullScreenWindow.isShown != null
+                && FullScreenWindow.isHidden != null)
     }
 
     companion object {

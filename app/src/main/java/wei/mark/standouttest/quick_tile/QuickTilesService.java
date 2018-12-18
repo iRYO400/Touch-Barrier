@@ -44,8 +44,8 @@ public class QuickTilesService
     @Override
     public void onStartListening() {
         super.onStartListening();
-        setLabelByState(FullScreenWindow.isShown.getValue() != null
-                & FullScreenWindow.isShown.getValue() ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+//        if (FullScreenWindow.isShown != null && FullScreenWindow.isShown.getValue() != null)
+//            setLabelByState(FullScreenWindow.isShown.getValue() ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
     }
 
     /**
