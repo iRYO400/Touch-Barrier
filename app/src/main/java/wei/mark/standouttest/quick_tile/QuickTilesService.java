@@ -44,8 +44,11 @@ public class QuickTilesService
     @Override
     public void onStartListening() {
         super.onStartListening();
-//        if (FullScreenWindow.isShown != null && FullScreenWindow.isShown.getValue() != null)
-//            setLabelByState(FullScreenWindow.isShown.getValue() ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+        if (isWindowServiceActive()) {
+            setLabelByState(Tile.STATE_ACTIVE);
+        } else {
+            setLabelByState(Tile.STATE_INACTIVE);
+        }
     }
 
     /**
@@ -74,11 +77,13 @@ public class QuickTilesService
     }
 
     private void startBarrier() {
+//        if (isWindowServiceActive())
         StandOutWindow.show(this, FullScreenWindow.class, MAIN_WINDOW_ID);
     }
 
     private void stopBarrier() {
-        StandOutWindow.close(this, FullScreenWindow.class, MAIN_WINDOW_ID);
+        if (isWindowServiceActive())
+            StandOutWindow.close(this, FullScreenWindow.class, MAIN_WINDOW_ID);
     }
 
     private void setLabelByState(int state) {
@@ -98,5 +103,9 @@ public class QuickTilesService
         }
         getQsTile().setState(state);
         getQsTile().updateTile();
+    }
+
+    private boolean isWindowServiceActive() {
+        return StandOutWindow.isMyServiceRunning(this, FullScreenWindow.class);
     }
 }

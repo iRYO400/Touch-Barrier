@@ -77,6 +77,7 @@ class SettingsActivity : AppCompatActivity() {
 
         button2.setOnClickListener {
             switch_barrier.isChecked = !switch_barrier.isChecked
+            switch_notify_bar.isChecked = !switch_notify_bar.isChecked
         }
     }
 
@@ -108,8 +109,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showInvisibleBarrier() {
-        if (isWindowServiceActive())
-            StandOutWindow.showInInvisible(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
+        StandOutWindow.showInInvisible(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
     }
 
     private fun closeBarrier() {
@@ -133,8 +133,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun isWindowServiceActive(): Boolean {
-        return (FullScreenWindow.isShown != null
-                && FullScreenWindow.isHidden != null)
+        return (StandOutWindow.isMyServiceRunning(this, FullScreenWindow::class.java))
     }
 
     companion object {

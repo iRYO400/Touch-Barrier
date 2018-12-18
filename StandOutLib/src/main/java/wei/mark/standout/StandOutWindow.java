@@ -1,6 +1,7 @@
 package wei.mark.standout;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -226,6 +227,16 @@ public abstract class StandOutWindow extends Service {
                                 Bundle data, Class<? extends StandOutWindow> fromCls, int fromId) {
         ContextCompat.startForegroundService(context, getSendDataIntent(context, toCls, toId,
                 requestCode, data, fromCls, fromId));
+    }
+
+    public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
