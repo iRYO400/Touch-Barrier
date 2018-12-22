@@ -2,9 +2,9 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.settings.SettingsActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -59,12 +59,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,15 +66,16 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/main_title"
                         style="@style/SingleLinePrimaryMediumText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
                         android:text="Основные"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -92,26 +87,46 @@
                         style="@style/SingleLineSecondaryText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="Панель уведомлений"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/main_title" />
 
-                    <Switch
-                        android:id="@+id/switch_quick_settings"
+                    <TextView
+                        android:id="@+id/screen_lock"
                         style="@style/SingleLineSecondaryText"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:checked="true"
-                        android:text="Быстрые инструменты"
+                        android:layout_marginBottom="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:text="Настоить блокировку"
                         android:textSize="14sp"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/spinner"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/switch_notify_bar" />
 
+                    <Spinner
+                        android:id="@+id/spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:entries="@array/lock_types"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/screen_lock"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/screen_lock" />
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 
@@ -127,6 +142,21 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp">
 
+                    <Switch
+                        android:id="@+id/switch_close_on_unlock"
+                        style="@style/SingleLineSecondaryText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:checked="true"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:text="Закрыть при разблокировке"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/switch_close_on_activation" />
+
                     <TextView
                         android:id="@+id/additional_title"
                         style="@style/SingleLinePrimaryMediumText"
@@ -134,17 +164,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Дополнительные"
+
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Switch
-                        android:id="@+id/switch_close_on"
+                        android:id="@+id/switch_close_on_activation"
                         style="@style/SingleLineSecondaryText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="Закрыть настройки при включении"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"

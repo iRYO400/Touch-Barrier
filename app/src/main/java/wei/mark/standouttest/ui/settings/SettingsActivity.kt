@@ -8,16 +8,29 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.widget.AdapterView
 import com.orhanobut.hawk.Hawk
 import kotlinx.android.synthetic.main.activity_settings.*
 import wei.mark.standout.StandOutWindow
 import wei.mark.standouttest.FullScreenWindow
 import wei.mark.standouttest.R
-import wei.mark.standouttest.utils.HawkKeys.Companion.CLOSE_ON_ACTIVE
+import wei.mark.standouttest.ui.common.SpinnerItemSelectedImpl
+import wei.mark.standouttest.ui.lock_screen.ScreenLockActivity
+import wei.mark.standouttest.ui.lock_screen.ScreenLockType
+import wei.mark.standouttest.utils.HawkKeys.Companion.CLOSE_ON_ACTIVATION
+import wei.mark.standouttest.utils.HawkKeys.Companion.CLOSE_ON_UNLOCK
+import wei.mark.standouttest.utils.HawkKeys.Companion.LOCK_TYPE_INDEX
+import wei.mark.standouttest.utils.HawkKeys.Companion.PATTERN_DOTS
+import wei.mark.standouttest.utils.HawkKeys.Companion.PIN_CODE
+import wei.mark.standouttest.utils.IntentKeys.Companion.LOCK_TYPE_NEW
 import wei.mark.standouttest.utils.WindowKeys.Companion.MAIN_WINDOW_ID
+import wei.mark.standouttest.utils.showSnackbarError
 
 class SettingsActivity : AppCompatActivity() {
+
+    private var isSpinnerInitializing = true
+
+    private lateinit var spinnerListener: AdapterView.OnItemSelectedListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +45,28 @@ class SettingsActivity : AppCompatActivity() {
             return
         }
 
+        setDefault()
         setListeners()
         setObservers()
+    }
+
+    private fun setDefault() {
+        isSpinnerInitializing = true
+        if (Hawk.contains(LOCK_TYPE_INDEX)) {
+            val type = Hawk.get(LOCK_TYPE_INDEX, ScreenLockType.NONE)
+            spinner.setSelection(type.getPosition(), false)
+        }
+
+        if (Hawk.contains(CLOSE_ON_ACTIVATION))
+            switch_close_on_activation.isChecked = Hawk.get(CLOSE_ON_ACTIVATION)
+        else
+            Hawk.put(CLOSE_ON_ACTIVATION, false)
+
+
+        if (Hawk.contains(CLOSE_ON_UNLOCK))
+            switch_close_on_unlock.isChecked = Hawk.get(CLOSE_ON_UNLOCK)
+        else
+            Hawk.put(CLOSE_ON_UNLOCK, true)
     }
 
     private fun setListeners() {
@@ -41,7 +74,6 @@ class SettingsActivity : AppCompatActivity() {
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
-            Log.d("DEBUG_TAG", "switchBarrier $isChecked")
             if (isChecked)
                 showVisibleBarrier()
             else
@@ -52,33 +84,53 @@ class SettingsActivity : AppCompatActivity() {
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
-            Log.d("DEBUG_TAG", "switchNotifyBar $isChecked")
             if (isChecked)
                 showInvisibleBarrier()
             else
                 closeBarrier()
         }
 
-        switch_quick_settings.setOnCheckedChangeListener { buttonView, isChecked ->
-
-        }
-
-        switch_close_on.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (!Hawk.contains(CLOSE_ON_ACTIVE)) {
-                Hawk.put(CLOSE_ON_ACTIVE, true)
+        switch_close_on_activation.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
+
+            Hawk.put(CLOSE_ON_ACTIVATION, isChecked)
+        }
+
+        switch_close_on_unlock.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (!buttonView!!.isPressed)
+                return@setOnCheckedChangeListener
+
+            Hawk.put(CLOSE_ON_UNLOCK, isChecked)
+        }
+
+        spinnerListener = object : SpinnerItemSelectedImpl() {
+
+            override fun onItemSelected(position: Int) {
+                if (isSpinnerInitializing) {
+                    isSpinnerInitializing = false
+                    return
+                }
+                if (position == 0)
+                    clearPreviousLockProperties()
+                else if (position == 1 || position == 2)
+                    screen_lock.performClick()
+
+                screen_lock.isEnabled = position != 0
             }
-
-            if (isChecked)
-                Hawk.put(CLOSE_ON_ACTIVE, true)
-            else
-                Hawk.put(CLOSE_ON_ACTIVE, false)
         }
+        spinner.onItemSelectedListener = spinnerListener
 
-        button2.setOnClickListener {
-            switch_barrier.isChecked = !switch_barrier.isChecked
-            switch_notify_bar.isChecked = !switch_notify_bar.isChecked
+        screen_lock.setOnClickListener {
+            val intent = Intent(this, ScreenLockActivity::class.java)
+            intent.putExtra(LOCK_TYPE_NEW, spinner.selectedItemPosition)
+            startActivityForResult(intent, REQUEST_SET_LOCK)
         }
+    }
+
+    private fun clearPreviousLockProperties() {
+        Hawk.delete(PATTERN_DOTS)
+        Hawk.delete(PIN_CODE)
     }
 
     private fun setObservers() {
@@ -103,8 +155,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun showVisibleBarrier() {
         StandOutWindow.show(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
 
-        if (Hawk.contains(CLOSE_ON_ACTIVE))
-            if (Hawk.get(CLOSE_ON_ACTIVE))
+        if (Hawk.contains(CLOSE_ON_ACTIVATION))
+            if (Hawk.get(CLOSE_ON_ACTIVATION))
                 finish()
     }
 
@@ -130,6 +182,23 @@ class SettingsActivity : AppCompatActivity() {
                 finish()
             }
         }
+        if (requestCode == REQUEST_SET_LOCK) {
+            if (resultCode == Activity.RESULT_OK) {
+                Hawk.put(LOCK_TYPE_INDEX, getLockTypeByPosition(spinner.selectedItemPosition))
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                showSnackbarError(coordinator, getString(R.string.error_did_not_set_lock))
+                setDefault()
+            }
+        }
+    }
+
+    private fun getLockTypeByPosition(position: Int): ScreenLockType {
+        var type: ScreenLockType = ScreenLockType.NONE
+        when (position) {
+            1 -> type = ScreenLockType.PIN
+            2 -> type = ScreenLockType.PATTERN
+        }
+        return type
     }
 
     private fun isWindowServiceActive(): Boolean {
@@ -138,5 +207,6 @@ class SettingsActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CODE = 101
+        private const val REQUEST_SET_LOCK = 102
     }
 }
