@@ -10,10 +10,10 @@ import wei.mark.standout.ui.Window;
 import android.util.SparseArray;
 
 public class WindowCache {
-	public Map<Class<? extends StandOutWindow>, SparseArray<Window>> sWindows;
+	public Map<Class<? extends IStandOutWindow>, SparseArray<Window>> sWindows;
 
 	public WindowCache() {
-		sWindows = new HashMap<Class<? extends StandOutWindow>, SparseArray<Window>>();
+		sWindows = new HashMap<Class<? extends IStandOutWindow>, SparseArray<Window>>();
 	}
 
 	/**
@@ -27,7 +27,7 @@ public class WindowCache {
 	 * @return True if the window corresponding to the class and id exists in
 	 *         the cache, or false if it does not exist.
 	 */
-	public boolean isCached(int id, Class<? extends StandOutWindow> cls) {
+	public boolean isCached(int id, Class<? extends IStandOutWindow> cls) {
 		return getCache(id, cls) != null;
 	}
 
@@ -42,7 +42,7 @@ public class WindowCache {
 	 * @return The window corresponding to the id if it exists in the cache, or
 	 *         null if it does not.
 	 */
-	public Window getCache(int id, Class<? extends StandOutWindow> cls) {
+	public Window getCache(int id, Class<? extends IStandOutWindow> cls) {
 		SparseArray<Window> l2 = sWindows.get(cls);
 		if (l2 == null) {
 			return null;
@@ -61,7 +61,7 @@ public class WindowCache {
 	 * @param window
 	 *            The window to be put in the cache.
 	 */
-	public void putCache(int id, Class<? extends StandOutWindow> cls, Window window) {
+	public void putCache(int id, Class<? extends IStandOutWindow> cls, Window window) {
 		SparseArray<Window> l2 = sWindows.get(cls);
 		if (l2 == null) {
 			l2 = new SparseArray<Window>();
@@ -80,7 +80,7 @@ public class WindowCache {
 	 * @param cls
 	 *            The class of the implementation of the window.
 	 */
-	public void removeCache(int id, Class<? extends StandOutWindow> cls) {
+	public void removeCache(int id, Class<? extends IStandOutWindow> cls) {
 		SparseArray<Window> l2 = sWindows.get(cls);
 		if (l2 != null) {
 			l2.remove(id);
@@ -98,7 +98,7 @@ public class WindowCache {
 	 * @param cls
 	 *            The class of the implementation of the window.
 	 */
-	public int getCacheSize(Class<? extends StandOutWindow> cls) {
+	public int getCacheSize(Class<? extends IStandOutWindow> cls) {
 		SparseArray<Window> l2 = sWindows.get(cls);
 		if (l2 == null) {
 			return 0;
@@ -114,7 +114,7 @@ public class WindowCache {
 	 *            The class of the implementation of the window.
 	 * @return The ids representing the cached windows.
 	 */
-	public Set<Integer> getCacheIds(Class<? extends StandOutWindow> cls) {
+	public Set<Integer> getCacheIds(Class<? extends IStandOutWindow> cls) {
 		SparseArray<Window> l2 = sWindows.get(cls);
 		if (l2 == null) {
 			return new HashSet<Integer>();

@@ -1,5 +1,6 @@
 package wei.mark.standout;
 
+import android.accessibilityservice.AccessibilityService;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -15,7 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -57,7 +57,7 @@ import static wei.mark.standout.constants.StandOutFlags.FLAG_NOTIFICATION_CHANNE
  * <p>
  * Contributors: Jason <github.com/jasonconnery>
  */
-public abstract class StandOutWindow extends Service
+public abstract class StandOutWindowAccessAbil extends AccessibilityService
         implements IStandOutWindow {
     static final String TAG = "StandOutWindow";
 
@@ -125,7 +125,7 @@ public abstract class StandOutWindow extends Service
      * window.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that will be used
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that will be used
      *                to create and manage the window.
      * @param id      The id representing this window. If the id exists, and the
      *                corresponding window was previously hidden, then that window
@@ -133,7 +133,7 @@ public abstract class StandOutWindow extends Service
      * @see #show(int)
      */
     public static void show(Context context,
-                            Class<? extends StandOutWindow> cls, int id) {
+                            Class<? extends StandOutWindowAccessAbil> cls, int id) {
         ContextCompat.startForegroundService(context, getShowIntent(context, cls, id));
     }
 
@@ -142,7 +142,7 @@ public abstract class StandOutWindow extends Service
      * window.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that will be used
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that will be used
      *                to create and manage the window.
      * @param id      The id representing this window. If the id exists, and the
      *                corresponding window was previously hidden, then that window
@@ -150,7 +150,7 @@ public abstract class StandOutWindow extends Service
      * @see #show(int)
      */
     public static void showInInvisible(Context context,
-                                       Class<? extends StandOutWindow> cls, int id) {
+                                       Class<? extends StandOutWindowAccessAbil> cls, int id) {
         ContextCompat.startForegroundService(context, getShowInInvisibleIntent(context, cls, id));
     }
 
@@ -160,14 +160,14 @@ public abstract class StandOutWindow extends Service
      * {@link #getHiddenNotification(int)}.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that is managing
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that is managing
      *                the window.
      * @param id      The id representing this window. The window must previously be
      *                shown.
      * @see #hide(int)
      */
     public static void hide(Context context,
-                            Class<? extends StandOutWindow> cls, int id) {
+                            Class<? extends StandOutWindowAccessAbil> cls, int id) {
         ContextCompat.startForegroundService(context, getHideIntent(context, cls, id));
     }
 
@@ -175,14 +175,14 @@ public abstract class StandOutWindow extends Service
      * Close an existing window with an existing id.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that is managing
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that is managing
      *                the window.
      * @param id      The id representing this window. The window must previously be
      *                shown.
      * @see #close(int)
      */
     public static void close(Context context,
-                             Class<? extends StandOutWindow> cls, int id) {
+                             Class<? extends StandOutWindowAccessAbil> cls, int id) {
         ContextCompat.startForegroundService(context, getCloseIntent(context, cls, id));
     }
 
@@ -190,12 +190,12 @@ public abstract class StandOutWindow extends Service
      * Close all existing windows.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that is managing
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that is managing
      *                the window.
      * @see #closeAll()
      */
     public static void closeAll(Context context,
-                                Class<? extends StandOutWindow> cls) {
+                                Class<? extends StandOutWindowAccessAbil> cls) {
         ContextCompat.startForegroundService(context, getCloseAllIntent(context, cls));
     }
 
@@ -211,7 +211,7 @@ public abstract class StandOutWindow extends Service
      *
      * @param context     A Context of the application package implementing the class of
      *                    the sending window.
-     * @param toCls       The Service's class extending {@link StandOutWindow} that is
+     * @param toCls       The Service's class extending {@link StandOutWindowAccessAbil} that is
      *                    managing the receiving window.
      * @param toId        The id of the receiving window, or DISREGARD_ID.
      * @param requestCode Provide a request code to declare what kind of data is being
@@ -224,7 +224,7 @@ public abstract class StandOutWindow extends Service
      */
     public static void sendData(Context context,
                                 Class<? extends IStandOutWindow> toCls, int toId, int requestCode,
-                                Bundle data, Class<? extends IStandOutWindow> fromCls, int fromId) {
+                                Bundle data, Class<? extends StandOutWindowAccessAbil> fromCls, int fromId) {
         ContextCompat.startForegroundService(context, getSendDataIntent(context, toCls, toId,
                 requestCode, data, fromCls, fromId));
     }
@@ -243,7 +243,7 @@ public abstract class StandOutWindow extends Service
      * See {@link #show(Context, Class, int)}.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that will be used
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that will be used
      *                to create and manage the window.
      * @param id      The id representing this window. If the id exists, and the
      *                corresponding window was previously hidden, then that window
@@ -252,7 +252,7 @@ public abstract class StandOutWindow extends Service
      * {@link Context#startService(Intent)}.
      */
     public static Intent getShowIntent(Context context,
-                                       Class<? extends StandOutWindow> cls, int id) {
+                                       Class<? extends StandOutWindowAccessAbil> cls, int id) {
         boolean cached = sWindowCache.isCached(id, cls);
         String action = cached ? ACTION_RESTORE : ACTION_SHOW;
         Uri uri = cached ? Uri.parse("standout://" + cls + '/' + id) : null;
@@ -261,7 +261,7 @@ public abstract class StandOutWindow extends Service
     }
 
     public static Intent getShowInInvisibleIntent(Context context,
-                                                  Class<? extends StandOutWindow> cls, int id) {
+                                                  Class<? extends StandOutWindowAccessAbil> cls, int id) {
         boolean cached = sWindowCache.isCached(id, cls);
         String action = cached ? ACTION_RESTORE : ACTION_SHOW_INVISIBLE;
         Uri uri = cached ? Uri.parse("standout://" + cls + '/' + id) : null;
@@ -273,7 +273,7 @@ public abstract class StandOutWindow extends Service
      * See {@link #hide(Context, Class, int)}.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that is managing
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that is managing
      *                the window.
      * @param id      The id representing this window. If the id exists, and the
      *                corresponding window was previously hidden, then that window
@@ -282,7 +282,7 @@ public abstract class StandOutWindow extends Service
      * {@link Context#startService(Intent)}.
      */
     public static Intent getHideIntent(Context context,
-                                       Class<? extends StandOutWindow> cls, int id) {
+                                       Class<? extends StandOutWindowAccessAbil> cls, int id) {
         return new Intent(context, cls).putExtra("id", id).setAction(
                 ACTION_HIDE);
     }
@@ -291,7 +291,7 @@ public abstract class StandOutWindow extends Service
      * See {@link #hide(Context, Class, int)}.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that is managing
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that is managing
      *                the window.
      * @param id      The id representing this window. If the id exists, and the
      *                corresponding window was previously hidden, then that window
@@ -300,7 +300,7 @@ public abstract class StandOutWindow extends Service
      * {@link Context#startService(Intent)}.
      */
     public static Intent getToggleVisIntent(Context context,
-                                            Class<? extends StandOutWindow> cls, int id) {
+                                            Class<? extends StandOutWindowAccessAbil> cls, int id) {
         return new Intent(context, cls).putExtra("id", id).setAction(
                 ACTION_TOGGLE_VIS);
     }
@@ -309,7 +309,7 @@ public abstract class StandOutWindow extends Service
      * See {@link #close(Context, Class, int)}.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that is managing
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that is managing
      *                the window.
      * @param id      The id representing this window. If the id exists, and the
      *                corresponding window was previously hidden, then that window
@@ -318,7 +318,7 @@ public abstract class StandOutWindow extends Service
      * {@link Context#startService(Intent)}.
      */
     public static Intent getCloseIntent(Context context,
-                                        Class<? extends StandOutWindow> cls, int id) {
+                                        Class<? extends StandOutWindowAccessAbil> cls, int id) {
         return new Intent(context, cls).putExtra("id", id).setAction(
                 ACTION_CLOSE);
     }
@@ -327,13 +327,13 @@ public abstract class StandOutWindow extends Service
      * See {@link #closeAll(Context, Class)}.
      *
      * @param context A Context of the application package implementing this class.
-     * @param cls     The Service extending {@link StandOutWindow} that is managing
+     * @param cls     The Service extending {@link StandOutWindowAccessAbil} that is managing
      *                the window.
      * @return An {@link Intent} to use with
      * {@link Context#startService(Intent)}.
      */
     public static Intent getCloseAllIntent(Context context,
-                                           Class<? extends StandOutWindow> cls) {
+                                           Class<? extends StandOutWindowAccessAbil> cls) {
         return new Intent(context, cls).setAction(ACTION_CLOSE_ALL);
     }
 
@@ -342,7 +342,7 @@ public abstract class StandOutWindow extends Service
      *
      * @param context     A Context of the application package implementing the class of
      *                    the sending window.
-     * @param toCls       The Service's class extending {@link StandOutWindow} that is
+     * @param toCls       The Service's class extending {@link StandOutWindowAccessAbil} that is
      *                    managing the receiving window.
      * @param toId        The id of the receiving window.
      * @param requestCode Provide a request code to declare what kind of data is being
@@ -383,11 +383,6 @@ public abstract class StandOutWindow extends Service
 
     // internal state variables
     private boolean startedForeground;
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 
     @Override
     public void onCreate() {
@@ -451,7 +446,7 @@ public abstract class StandOutWindow extends Service
                 Bundle data = intent.getBundleExtra("wei.mark.standout.data");
                 int requestCode = intent.getIntExtra("requestCode", 0);
                 @SuppressWarnings("unchecked")
-                Class<? extends StandOutWindow> fromCls = (Class<? extends StandOutWindow>) intent
+                Class<? extends StandOutWindowAccessAbil> fromCls = (Class<? extends StandOutWindowAccessAbil>) intent
                         .getSerializableExtra("wei.mark.standout.fromCls");
                 int fromId = intent.getIntExtra("fromId", DEFAULT_ID);
                 onReceiveData(id, requestCode, data, fromCls, fromId);
@@ -987,7 +982,7 @@ public abstract class StandOutWindow extends Service
 
                         // remove view from internal map
                         sWindowCache.removeCache(id,
-                                StandOutWindow.this.getClass());
+                                StandOutWindowAccessAbil.this.getClass());
 
                         // if we just released the last window, quit
                         if (getExistingIds().size() == 0) {
@@ -1045,7 +1040,7 @@ public abstract class StandOutWindow extends Service
     public final void sendData(int fromId,
                                Class<? extends IStandOutWindow> toCls, int toId, int requestCode,
                                Bundle data) {
-        StandOutWindow.sendData(this, toCls, toId, requestCode, data,
+        StandOutWindowAccessAbil.sendData(this, toCls, toId, requestCode, data,
                 getClass(), fromId);
     }
 
@@ -1264,14 +1259,14 @@ public abstract class StandOutWindow extends Service
                             && Utils.isSet(
                             window.flags,
                             StandOutFlags.FLAG_WINDOW_BRING_TO_FRONT_ON_TAP)) {
-                        StandOutWindow.this.bringToFront(id);
+                        StandOutWindowAccessAbil.this.bringToFront(id);
                     }
                 }
 
                 // bring to front on touch
                 else if (Utils.isSet(window.flags,
                         StandOutFlags.FLAG_WINDOW_BRING_TO_FRONT_ON_TOUCH)) {
-                    StandOutWindow.this.bringToFront(id);
+                    StandOutWindowAccessAbil.this.bringToFront(id);
                 }
 
                 break;

@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.andrognito.patternlockview.PatternLockView;
@@ -58,9 +57,6 @@ public class FullScreenWindow
     private Group container;
     private ScreenLockType lockType;
 
-    private PatternLockViewListener patternListener;
-    private PinLockListener pinListener;
-
     @Override
     public String getAppName() {
         return "FullScreenWindow";
@@ -74,8 +70,8 @@ public class FullScreenWindow
     @Override
     public void createAndAttachView(int id, FrameLayout frame) {
         // create a new layout from body.xml
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.full_screen, frame, true);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.full_screen, frame);
 
         setView(view);
         if (isLocked()) {
@@ -111,7 +107,7 @@ public class FullScreenWindow
     private void setPinLock(View view) {
         PinLockView pinLockView = view.findViewById(R.id.pin_lock_view);
         pinLockView.attachIndicatorDots(view.findViewById(R.id.indicator_dots));
-        pinListener = new PinLockViewImpl() {
+        PinLockListener pinListener = new PinLockViewImpl() {
             @Override
             public void onComplete(String pin) {
                 String hawkPin = Hawk.get(PIN_CODE);
@@ -125,7 +121,7 @@ public class FullScreenWindow
 
     private void setPatternLock(View view) {
         PatternLockView patternLockView = view.findViewById(R.id.pattern_lock_view);
-        patternListener = new PatterLockViewImpl() {
+        PatternLockViewListener patternListener = new PatterLockViewImpl() {
             @Override
             public void onComplete(List<PatternLockView.Dot> pattern) {
                 boolean hasDifference = false;
@@ -210,9 +206,7 @@ public class FullScreenWindow
 
     @Override
     public StandOutLayoutParams getParams(int id, Window window) {
-        return new StandOutLayoutParams(id, WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
-                StandOutLayoutParams.LEFT, StandOutLayoutParams.TOP);
+        return new StandOutLayoutParams(id);
     }
 
     @Override

@@ -155,9 +155,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun showVisibleBarrier() {
         StandOutWindow.show(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
 
-        if (Hawk.contains(CLOSE_ON_ACTIVATION))
-            if (Hawk.get(CLOSE_ON_ACTIVATION))
-                finish()
+        if (switch_close_on_activation.isChecked)
+            finish()
     }
 
     private fun showInvisibleBarrier() {

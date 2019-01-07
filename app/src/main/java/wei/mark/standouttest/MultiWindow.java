@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import wei.mark.standout.DropDownListItem;
+import wei.mark.standout.IStandOutWindow;
 import wei.mark.standout.StandOutWindow;
 import wei.mark.standout.constants.StandOutFlags;
 import wei.mark.standout.ui.Window;
@@ -167,7 +169,7 @@ public class MultiWindow extends StandOutWindow {
 
     @Override
     public void onReceiveData(int id, int requestCode, Bundle data,
-                              Class<? extends StandOutWindow> fromCls, int fromId) {
+                              Class<? extends IStandOutWindow> fromCls, int fromId) {
         // receive data from WidgetsWindow's button press
         // to show off the data sending framework
         switch (requestCode) {
