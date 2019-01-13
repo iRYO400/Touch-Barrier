@@ -5,10 +5,10 @@ import android.support.design.widget.Snackbar
 import android.view.View
 
 
-fun showSnackbarTimer(view: View,
-                      message: String,
-                      actionTitle: String?,
-                      listener: () -> Unit) {
+fun showSnackbarDelayAction(view: View,
+                            message: String,
+                            actionTitle: String?,
+                            listener: () -> Unit) {
     val snackbar = Snackbar.make(view,
             message,
             Snackbar.LENGTH_LONG
@@ -21,6 +21,23 @@ fun showSnackbarTimer(view: View,
         handler.postDelayed({
             listener()
         }, 2500)
+    }
+
+    snackbar.show()
+}
+
+fun showSnackbarAction(view: View,
+                      message: String,
+                      actionTitle: String?,
+                      listener: () -> Unit) {
+    val snackbar = Snackbar.make(view,
+            message,
+            Snackbar.LENGTH_LONG
+    )
+    if (actionTitle != null) {
+        snackbar.setAction(actionTitle) {
+            listener()
+        }
     }
 
     snackbar.show()

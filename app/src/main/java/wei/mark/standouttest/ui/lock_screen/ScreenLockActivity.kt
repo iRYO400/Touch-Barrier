@@ -22,7 +22,7 @@ import wei.mark.standouttest.utils.HawkKeys.Companion.PATTERN_DOTS
 import wei.mark.standouttest.utils.HawkKeys.Companion.PIN_CODE
 import wei.mark.standouttest.utils.IntentKeys.Companion.LOCK_TYPE_NEW
 import wei.mark.standouttest.utils.showSnackbarError
-import wei.mark.standouttest.utils.showSnackbarTimer
+import wei.mark.standouttest.utils.showSnackbarDelayAction
 
 class ScreenLockActivity : AppCompatActivity() {
 
@@ -114,7 +114,7 @@ class ScreenLockActivity : AppCompatActivity() {
             }
 
             Hawk.put(PIN_CODE, pinLock)
-            showSnackbarTimer(coordinator,
+            showSnackbarDelayAction(coordinator,
                     getString(R.string.set_pin_success),
                     getString(R.string.close)) {
                 onBackSuccess()
@@ -148,7 +148,7 @@ class ScreenLockActivity : AppCompatActivity() {
 
             Hawk.put(PATTERN_DOTS, patternLock)
             pattern_lock_view.setViewMode(CORRECT)
-            showSnackbarTimer(coordinator,
+            showSnackbarDelayAction(coordinator,
                     getString(R.string.set_pattern_success),
                     getString(R.string.close)) {
                 onBackSuccess()

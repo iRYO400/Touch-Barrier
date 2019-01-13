@@ -4,12 +4,15 @@ import android.accessibilityservice.AccessibilityService;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.constraint.Group;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,6 +23,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -42,7 +47,8 @@ import static wei.mark.standouttest.utils.HawkKeys.PIN_CODE;
 public class BarrierAccessibilityService extends AccessibilityService {
 
     private FrameLayout mRoot;
-    public static final String INTENT_FILTER_NAME = "barrierServiceEnabled";
+    public static final String INTENT_FILTER_ACCESSIBILITY = "barrierServiceEnabled";
+    public static final String INTENT_FILTER_ACTIVITY = "barrierActivityToggle";
     public static final String INTENT_ENABLE = "enableBarrier";
 
     private View background;
@@ -50,6 +56,8 @@ public class BarrierAccessibilityService extends AccessibilityService {
     private ScreenLockType lockType;
 
     private final ClearFocusTimer clearFocusTimer = new ClearFocusTimer();
+
+    public static boolean isActive = false;
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -72,9 +80,10 @@ public class BarrierAccessibilityService extends AccessibilityService {
                         enableUntouchableView();
                     else
                         disableUntouchableView();
+                    isActive = enable;
                 }
             }
-        }, new IntentFilter(INTENT_FILTER_NAME));
+        }, new IntentFilter(INTENT_FILTER_ACCESSIBILITY));
     }
 
     private void enableUntouchableView() {
@@ -94,9 +103,7 @@ public class BarrierAccessibilityService extends AccessibilityService {
         wm.addView(mRoot, lp);
 
         setView(view);
-        if (isLocked()) {
-            initLockScreen(view);
-        }
+        initLockScreen(view);
 
         unFocusViewOnTouch(view);
     }
@@ -116,22 +123,40 @@ public class BarrierAccessibilityService extends AccessibilityService {
         container = background.findViewById(R.id.container);
     }
 
-    private boolean isLocked() {
+    private void getLockType() {
         if (Hawk.contains(LOCK_TYPE_INDEX)) {
             lockType = Hawk.get(LOCK_TYPE_INDEX);
-            return true;
+        } else {
+            lockType = ScreenLockType.NONE;
         }
-        return false;
     }
 
     private void initLockScreen(View view) {
+        getLockType();
+
         if (lockType == ScreenLockType.PIN) {
             container.setReferencedIds(new int[]{R.id.pin_lock_view, R.id.indicator_dots});
             setPinLock(view);
         } else if (lockType == ScreenLockType.PATTERN) {
             container.setReferencedIds(new int[]{R.id.pattern_lock_view});
             setPatternLock(view);
+        } else {
+            ImageView icon = view.findViewById(R.id.app_icon);
+            icon.setOnClickListener(v -> onBackPressed());
         }
+    }
+
+    private boolean doubleBackToExitPressedOnce = false;
+
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            lockSucceeded();
+            return;
+        }
+
+        doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, getString(R.string.double_tap_toast), Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
     private void setPinLock(View view) {
@@ -180,6 +205,10 @@ public class BarrierAccessibilityService extends AccessibilityService {
     }
 
     private void lockSucceeded() {
+        Intent intent = new Intent(INTENT_FILTER_ACTIVITY);
+        intent.putExtra(INTENT_ENABLE, false);
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent);
         disableUntouchableView();
     }
 
@@ -249,5 +278,26 @@ public class BarrierAccessibilityService extends AccessibilityService {
                 fadeViewAnimator(true);
             }
         }
+    }
+
+    public static boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {
+        ComponentName expectedComponentName = new ComponentName(context, accessibilityService);
+
+        String enabledServicesSetting = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        if (enabledServicesSetting == null)
+            return false;
+
+        TextUtils.SimpleStringSplitter colonSplitter = new TextUtils.SimpleStringSplitter(':');
+        colonSplitter.setString(enabledServicesSetting);
+
+        while (colonSplitter.hasNext()) {
+            String componentNameString = colonSplitter.next();
+            ComponentName enabledService = ComponentName.unflattenFromString(componentNameString);
+
+            if (enabledService != null && enabledService.equals(expectedComponentName))
+                return true;
+        }
+
+        return false;
     }
 }

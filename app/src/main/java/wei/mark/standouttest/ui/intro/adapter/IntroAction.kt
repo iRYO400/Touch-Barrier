@@ -1,7 +1,14 @@
 package wei.mark.standouttest.ui.intro.adapter
 
 data class IntroAction(
-        val textResourceId: Int,
-        val imageResourceId: Int,
-        val intentAction: String?
+        val titleResourceId: Int,
+        val descriptionResourceId: Int,
+        val imageResourceId: Int?,
+        val actionType: ActionType
 )
+
+enum class ActionType {
+    NON_ACTION,
+    OPEN_DRAW_OVER_SETTINGS,
+    OPEN_ACCESSIBILITY_SETTINGS
+}

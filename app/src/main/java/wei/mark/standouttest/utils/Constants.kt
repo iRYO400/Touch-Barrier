@@ -24,7 +24,7 @@ interface HawkKeys {
 
         const val LOCK_TYPE_INDEX = "LockTypeIndex"
 
-
+        const val NOTIFY_CHANNEL_CREATED = "isNotifyChannelCreated"
 
         const val PATTERN_DOTS = "patternDots"
         const val PIN_CODE = "pinCode"
