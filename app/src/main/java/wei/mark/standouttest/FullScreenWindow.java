@@ -82,7 +82,7 @@ public class FullScreenWindow
     }
 
     private void setView(View view) {
-        rootView = view.findViewById(R.id.root);
+        rootView = view.findViewById(R.id.background);
         container = rootView.findViewById(R.id.container);
     }
 

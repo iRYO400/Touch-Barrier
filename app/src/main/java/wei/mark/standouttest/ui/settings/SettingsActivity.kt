@@ -7,13 +7,15 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.AdapterView
 import com.orhanobut.hawk.Hawk
 import kotlinx.android.synthetic.main.activity_settings.*
-import wei.mark.standout.StandOutWindow
 import wei.mark.standouttest.FullScreenWindow
 import wei.mark.standouttest.R
+import wei.mark.standouttest.accessibility.BarrierAccessibilityService.INTENT_ENABLE
+import wei.mark.standouttest.accessibility.BarrierAccessibilityService.INTENT_FILTER_NAME
 import wei.mark.standouttest.ui.common.SpinnerItemSelectedImpl
 import wei.mark.standouttest.ui.lock_screen.ScreenLockActivity
 import wei.mark.standouttest.ui.lock_screen.ScreenLockType
@@ -23,7 +25,6 @@ import wei.mark.standouttest.utils.HawkKeys.Companion.LOCK_TYPE_INDEX
 import wei.mark.standouttest.utils.HawkKeys.Companion.PATTERN_DOTS
 import wei.mark.standouttest.utils.HawkKeys.Companion.PIN_CODE
 import wei.mark.standouttest.utils.IntentKeys.Companion.LOCK_TYPE_NEW
-import wei.mark.standouttest.utils.WindowKeys.Companion.MAIN_WINDOW_ID
 import wei.mark.standouttest.utils.showSnackbarError
 
 class SettingsActivity : AppCompatActivity() {
@@ -75,20 +76,20 @@ class SettingsActivity : AppCompatActivity() {
                 return@setOnCheckedChangeListener
 
             if (isChecked)
-                showVisibleBarrier()
+                enableBarrier()
             else
-                closeBarrier()
+                disableBarrier()
         }
 
-        switch_notify_bar.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (!buttonView!!.isPressed)
-                return@setOnCheckedChangeListener
-
-            if (isChecked)
-                showInvisibleBarrier()
-            else
-                closeBarrier()
-        }
+//        switch_notify_bar.setOnCheckedChangeListener { buttonView, isChecked ->
+//            if (!buttonView!!.isPressed)
+//                return@setOnCheckedChangeListener
+//
+//            if (isChecked)
+//                showInvisibleBarrier()
+//            else
+//                disableBarrier()
+//        }
 
         switch_close_on_activation.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
@@ -152,20 +153,21 @@ class SettingsActivity : AppCompatActivity() {
         })
     }
 
-    private fun showVisibleBarrier() {
-        StandOutWindow.show(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
+    private fun enableBarrier() {
+        val intent = Intent(INTENT_FILTER_NAME)
+        intent.putExtra(INTENT_ENABLE, true)
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent)
 
         if (switch_close_on_activation.isChecked)
             finish()
     }
 
-    private fun showInvisibleBarrier() {
-        StandOutWindow.showInInvisible(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
-    }
-
-    private fun closeBarrier() {
-        if (isWindowServiceActive())
-            StandOutWindow.close(this, FullScreenWindow::class.java, MAIN_WINDOW_ID)
+    private fun disableBarrier() {
+        val intent = Intent(INTENT_FILTER_NAME)
+        intent.putExtra(INTENT_ENABLE, false)
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -198,10 +200,6 @@ class SettingsActivity : AppCompatActivity() {
             2 -> type = ScreenLockType.PATTERN
         }
         return type
-    }
-
-    private fun isWindowServiceActive(): Boolean {
-        return (StandOutWindow.isMyServiceRunning(this, FullScreenWindow::class.java))
     }
 
     companion object {
