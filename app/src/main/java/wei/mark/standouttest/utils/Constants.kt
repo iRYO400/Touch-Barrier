@@ -16,6 +16,9 @@ interface IntentKeys {
 interface HawkKeys {
 
     companion object {
+
+        const val IS_FIRST_START = "ShowTutorialFragment"
+
         const val CLOSE_ON_ACTIVATION = "ShouldCloseOnActivation"
         const val CLOSE_ON_UNLOCK = "ShouldCloseOnUnlock"
 
