@@ -8,11 +8,15 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.v4.app.NotificationCompat
-import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.app.NotificationCompat.VISIBILITY_PRIVATE
+import android.support.v4.app.NotificationCompat.VISIBILITY_SECRET
+import wei.mark.standouttest.BuildConfig
 import wei.mark.standouttest.R
-import wei.mark.standouttest.accessibility.BarrierAccessibilityService
-import wei.mark.standouttest.accessibility.BarrierAccessibilityService.*
+import wei.mark.standouttest.accessibility.NotificationBroadcastReceiver
 import wei.mark.standouttest.ui.settings.SettingsActivity
+import wei.mark.standouttest.utils.IntentKeys.Companion.INTENT_ACTION_TOGGLE
+import wei.mark.standouttest.utils.IntentKeys.Companion.INTENT_TOGGLE_BARRIER
+import wei.mark.standouttest.utils.NotificationKeys.Companion.NOTIFICATION_ID
 
 object NotificationExt {
 
@@ -28,6 +32,7 @@ object NotificationExt {
             )
             channel.enableLights(false)
             channel.enableVibration(true)
+            channel.lockscreenVisibility = VISIBILITY_SECRET
             channel.vibrationPattern = longArrayOf(100, 200, 300)
             channel.importance = NotificationManager.IMPORTANCE_LOW
             val manager = context.getSystemService(NotificationManager::class.java)
@@ -44,7 +49,7 @@ object NotificationExt {
     }
 
     private fun getNotificationId(): Int {
-        return 1001
+        return NOTIFICATION_ID
     }
 
     fun enableNotification(context: Context) {
@@ -57,6 +62,7 @@ object NotificationExt {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_stat_name)
+                .setVisibility(VISIBILITY_SECRET)
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(getToggleAction(context))
@@ -67,20 +73,14 @@ object NotificationExt {
     }
 
     private fun getToggleAction(context: Context): NotificationCompat.Action? {
-        val isActive = BarrierAccessibilityService.isActive
-        val intent = Intent(INTENT_FILTER_ACCESSIBILITY)
-        intent.putExtra(INTENT_ENABLE, !isActive)
-        LocalBroadcastManager.getInstance(context)
-                .sendBroadcast(intent)
+        val intent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
+            action = INTENT_ACTION_TOGGLE
+            putExtra(INTENT_TOGGLE_BARRIER, true)
+        }
 
-//        intent = Intent(INTENT_FILTER_ACTIVITY)
-//        intent.putExtra(INTENT_ENABLE, !isActive)
-//        LocalBroadcastManager.getInstance(context)
-//                .sendBroadcast(intent)
-
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val builder = NotificationCompat.Action.Builder(R.drawable.ic_layers_active_24dp,
-                context.getString(R.string.notification_panel_toggle),
-                PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                context.getString(R.string.notification_panel_toggle), pendingIntent)
         return builder.build()
     }
 

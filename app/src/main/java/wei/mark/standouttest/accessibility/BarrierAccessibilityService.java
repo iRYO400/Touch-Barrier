@@ -3,8 +3,9 @@ package wei.mark.standouttest.accessibility;
 import android.accessibilityservice.AccessibilityService;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.app.KeyguardManager;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,11 +13,11 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.constraint.Group;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,16 +41,16 @@ import wei.mark.standouttest.ui.common.PatterLockViewImpl;
 import wei.mark.standouttest.ui.common.PinLockViewImpl;
 import wei.mark.standouttest.ui.lock_screen.ScreenLockType;
 
+import static wei.mark.standouttest.quick_tile.QuickTilesService.TAG;
 import static wei.mark.standouttest.utils.HawkKeys.LOCK_TYPE_INDEX;
 import static wei.mark.standouttest.utils.HawkKeys.PATTERN_DOTS;
 import static wei.mark.standouttest.utils.HawkKeys.PIN_CODE;
+import static wei.mark.standouttest.utils.IntentKeys.INTENT_FILTER_ACCESSIBILITY;
+import static wei.mark.standouttest.utils.IntentKeys.INTENT_TOGGLE_BARRIER;
 
 public class BarrierAccessibilityService extends AccessibilityService {
 
     private FrameLayout mRoot;
-    public static final String INTENT_FILTER_ACCESSIBILITY = "barrierServiceEnabled";
-    public static final String INTENT_FILTER_ACTIVITY = "barrierActivityToggle";
-    public static final String INTENT_ENABLE = "enableBarrier";
 
     private View background;
     private Group container;
@@ -57,7 +58,7 @@ public class BarrierAccessibilityService extends AccessibilityService {
 
     private final ClearFocusTimer clearFocusTimer = new ClearFocusTimer();
 
-    public static boolean isActive = false;
+    public static MutableLiveData<Boolean> barrierState = new MutableLiveData<>();
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -71,22 +72,37 @@ public class BarrierAccessibilityService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         mRoot = new FrameLayout(this);
+        barrierState.setValue(false);
+
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.hasExtra(INTENT_ENABLE)) {
-                    boolean enable = intent.getBooleanExtra(INTENT_ENABLE, false);
-                    if (enable)
-                        enableUntouchableView();
-                    else
-                        disableUntouchableView();
-                    isActive = enable;
-                }
+                processIntent(intent);
             }
         }, new IntentFilter(INTENT_FILTER_ACCESSIBILITY));
     }
 
+    private void processIntent(Intent intent) {
+        if (intent.hasExtra(INTENT_TOGGLE_BARRIER)) {
+            boolean enable = intent.getBooleanExtra(INTENT_TOGGLE_BARRIER, false);
+            if (enable)
+                enableUntouchableView();
+            else
+                disableUntouchableView();
+
+        }
+    }
+
     private void enableUntouchableView() {
+        KeyguardManager myKM = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        if (myKM.inKeyguardRestrictedInputMode()) {
+            Log.d(TAG, "enableUntouchableView: app is locked");
+            return;
+        }
+
+        barrierState.setValue(true);
+
+
         // Create an overlay and display the action bar
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
 
@@ -106,12 +122,16 @@ public class BarrierAccessibilityService extends AccessibilityService {
         initLockScreen(view);
 
         unFocusViewOnTouch(view);
+
+        Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        sendBroadcast(it);
     }
 
 
     private void disableUntouchableView() {
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         try {
+            barrierState.setValue(false);
             wm.removeView(mRoot);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -205,10 +225,6 @@ public class BarrierAccessibilityService extends AccessibilityService {
     }
 
     private void lockSucceeded() {
-        Intent intent = new Intent(INTENT_FILTER_ACTIVITY);
-        intent.putExtra(INTENT_ENABLE, false);
-        LocalBroadcastManager.getInstance(this)
-                .sendBroadcast(intent);
         disableUntouchableView();
     }
 
@@ -278,26 +294,5 @@ public class BarrierAccessibilityService extends AccessibilityService {
                 fadeViewAnimator(true);
             }
         }
-    }
-
-    public static boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {
-        ComponentName expectedComponentName = new ComponentName(context, accessibilityService);
-
-        String enabledServicesSetting = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-        if (enabledServicesSetting == null)
-            return false;
-
-        TextUtils.SimpleStringSplitter colonSplitter = new TextUtils.SimpleStringSplitter(':');
-        colonSplitter.setString(enabledServicesSetting);
-
-        while (colonSplitter.hasNext()) {
-            String componentNameString = colonSplitter.next();
-            ComponentName enabledService = ComponentName.unflattenFromString(componentNameString);
-
-            if (enabledService != null && enabledService.equals(expectedComponentName))
-                return true;
-        }
-
-        return false;
     }
 }

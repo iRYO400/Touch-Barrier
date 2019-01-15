@@ -9,15 +9,14 @@ import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.app.Fragment
 import android.support.v7.widget.PagerSnapHelper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.intro_fragment.*
 import wei.mark.standouttest.BarrierApplication
 import wei.mark.standouttest.R
+import wei.mark.standouttest.accessibility.AccessibilityServiceHelper.isAccessibilityServiceEnabled
 import wei.mark.standouttest.accessibility.BarrierAccessibilityService
-import wei.mark.standouttest.accessibility.BarrierAccessibilityService.*
 import wei.mark.standouttest.ui.intro.adapter.ActionType
 import wei.mark.standouttest.ui.intro.adapter.IntroAction
 import wei.mark.standouttest.ui.intro.adapter.IntroAdapter
@@ -103,9 +102,9 @@ class IntroFragment : Fragment() {
     private fun checkPermissions() {
         var allPermissionAccepted = true
 
-        if (Build.VERSION.SDK_INT >= 23 && !BarrierApplication.instance.canDrawOverApps()) {
-            allPermissionAccepted = false
-        }
+//        if (Build.VERSION.SDK_INT >= 23 && !BarrierApplication.instance.canDrawOverApps()) {
+//            allPermissionAccepted = false
+//        }
 
         if (!isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)) {
             allPermissionAccepted = false
@@ -120,8 +119,8 @@ class IntroFragment : Fragment() {
 
     private fun getTutorials(): List<IntroAction> {
         val tutorials = ArrayList<IntroAction>()
-        tutorials.add(IntroAction(R.string.tutorial_1, R.string.tutorial_1_desc,
-                R.drawable.tutorial1, ActionType.OPEN_DRAW_OVER_SETTINGS))
+//        tutorials.add(IntroAction(R.string.tutorial_1, R.string.tutorial_1_desc,
+//                R.drawable.tutorial1, ActionType.OPEN_DRAW_OVER_SETTINGS))
         tutorials.add(IntroAction(R.string.tutorial_2, R.string.tutorial_2_desc,
                 R.drawable.tutorial2, ActionType.OPEN_ACCESSIBILITY_SETTINGS))
         return tutorials

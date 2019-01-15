@@ -1,29 +1,27 @@
 package wei.mark.standouttest.quick_tile;
 
 import android.annotation.TargetApi;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
-import wei.mark.standout.StandOutWindow;
-import wei.mark.standouttest.FullScreenWindow;
+import wei.mark.standouttest.BarrierApplication;
 import wei.mark.standouttest.R;
-import wei.mark.standouttest.SimpleWindow;
+import wei.mark.standouttest.accessibility.BarrierAccessibilityService;
 
-import static wei.mark.standouttest.utils.WindowKeys.MAIN_WINDOW_ID;
+import static wei.mark.standouttest.accessibility.AccessibilityServiceHelper.isAccessibilityServiceEnabled;
+import static wei.mark.standouttest.utils.IntentKeys.INTENT_FILTER_ACCESSIBILITY;
+import static wei.mark.standouttest.utils.IntentKeys.INTENT_TOGGLE_BARRIER;
 
 @TargetApi(Build.VERSION_CODES.N)
 public class QuickTilesService
         extends TileService {
 
-    public static final String TAG = "QuickTilesService";
+    public static final String TAG = "DEBUG_TAG";
 
     @Override
     public void onTileAdded() {
@@ -35,7 +33,6 @@ public class QuickTilesService
     public void onTileRemoved() {
         super.onTileRemoved();
         setLabelByState(Tile.STATE_UNAVAILABLE);
-        stopBarrier();
     }
 
     /**
@@ -44,10 +41,10 @@ public class QuickTilesService
     @Override
     public void onStartListening() {
         super.onStartListening();
-        if (isWindowServiceActive()) {
-            setLabelByState(Tile.STATE_ACTIVE);
-        } else {
+        if (isAccessibilityServiceEnabled(this, BarrierAccessibilityService.class)) {
             setLabelByState(Tile.STATE_INACTIVE);
+        } else {
+            setLabelByState(Tile.STATE_UNAVAILABLE);
         }
     }
 
@@ -63,7 +60,7 @@ public class QuickTilesService
     public void onClick() {
         super.onClick();
         if (isLocked()) {
-            Toast.makeText(this, "Please, unlock the device.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.unlock_screen_to_toggle), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -77,35 +74,32 @@ public class QuickTilesService
     }
 
     private void startBarrier() {
-//        if (isWindowServiceActive())
-        StandOutWindow.show(this, FullScreenWindow.class, MAIN_WINDOW_ID);
+        Intent intent = new Intent(INTENT_FILTER_ACCESSIBILITY);
+        intent.putExtra(INTENT_TOGGLE_BARRIER, true);
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent);
     }
 
     private void stopBarrier() {
-        if (isWindowServiceActive())
-            StandOutWindow.close(this, FullScreenWindow.class, MAIN_WINDOW_ID);
+        Intent intent = new Intent(INTENT_FILTER_ACCESSIBILITY);
+        intent.putExtra(INTENT_TOGGLE_BARRIER, false);
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent);
     }
 
     private void setLabelByState(int state) {
         switch (state) {
             case Tile.STATE_ACTIVE:
                 getQsTile().setIcon(Icon.createWithResource(this, R.drawable.ic_layers_active_24dp));
-                FullScreenWindow.isShown.setValue(true);
                 break;
             case Tile.STATE_INACTIVE:
                 getQsTile().setIcon(Icon.createWithResource(this, R.drawable.ic_layers_inactive_24dp));
-                FullScreenWindow.isShown.setValue(false);
                 break;
             case Tile.STATE_UNAVAILABLE:
                 getQsTile().setIcon(Icon.createWithResource(this, R.drawable.ic_layers_unavailable_24dp));
-                FullScreenWindow.isShown.setValue(false);
                 break;
         }
         getQsTile().setState(state);
         getQsTile().updateTile();
-    }
-
-    private boolean isWindowServiceActive() {
-        return StandOutWindow.isMyServiceRunning(this, FullScreenWindow.class);
     }
 }

@@ -8,8 +8,17 @@ interface WindowKeys {
 
 interface IntentKeys {
     companion object {
+        const val INTENT_FILTER_ACCESSIBILITY = "barrierServiceEnabled"
+        const val INTENT_ACTION_TOGGLE = "workshop.akbolatss.app.barrier.action.toggle"
+        const val INTENT_TOGGLE_BARRIER = "toggleBarrier"
         const val LOCK_TYPE_NEW = "lockTypeNew"
 
+    }
+}
+
+interface NotificationKeys {
+    companion object {
+        const val NOTIFICATION_ID = 400
     }
 }
 

@@ -1,12 +1,12 @@
 package wei.mark.standouttest.ui.settings
 
+import android.annotation.TargetApi
 import android.app.Activity
+import android.app.NotificationManager
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,19 +21,21 @@ import android.widget.AdapterView
 import com.orhanobut.hawk.Hawk
 import kotlinx.android.synthetic.main.settings_fragment.*
 import wei.mark.standouttest.BarrierApplication
-import wei.mark.standouttest.FullScreenWindow
 import wei.mark.standouttest.R
+import wei.mark.standouttest.accessibility.AccessibilityServiceHelper.isAccessibilityServiceEnabled
 import wei.mark.standouttest.accessibility.BarrierAccessibilityService
-import wei.mark.standouttest.accessibility.BarrierAccessibilityService.*
 import wei.mark.standouttest.ui.common.SpinnerItemSelectedImpl
 import wei.mark.standouttest.ui.intro.adapter.ActionType
 import wei.mark.standouttest.ui.lock_screen.ScreenLockActivity
 import wei.mark.standouttest.ui.lock_screen.ScreenLockType
 import wei.mark.standouttest.utils.HawkKeys
 import wei.mark.standouttest.utils.IntentKeys
+import wei.mark.standouttest.utils.IntentKeys.Companion.INTENT_FILTER_ACCESSIBILITY
+import wei.mark.standouttest.utils.IntentKeys.Companion.INTENT_TOGGLE_BARRIER
 import wei.mark.standouttest.utils.NotificationExt.createDefaultNotificationChannel
 import wei.mark.standouttest.utils.NotificationExt.disableNotification
 import wei.mark.standouttest.utils.NotificationExt.enableNotification
+import wei.mark.standouttest.utils.NotificationKeys.Companion.NOTIFICATION_ID
 import wei.mark.standouttest.utils.showSnackbarError
 
 class SettingsFragment : Fragment() {
@@ -69,8 +71,26 @@ class SettingsFragment : Fragment() {
 
         setDefault()
         setListeners()
+        setObservers()
     }
 
+    /**
+     * Observers
+     */
+    private fun setObservers() {
+        BarrierAccessibilityService.barrierState.observe(this, Observer {
+            var barrierState = it
+            if (barrierState == null)
+                barrierState = false
+
+            switch_barrier.isChecked = barrierState
+        })
+    }
+
+    /**
+     * Init default values
+     * TODO:move to SettingsActivity
+     */
     private fun setDefault() {
         isSpinnerInitializing = true
         if (Hawk.contains(HawkKeys.LOCK_TYPE_INDEX)) {
@@ -93,18 +113,25 @@ class SettingsFragment : Fragment() {
             Hawk.put(HawkKeys.NOTIFY_CHANNEL_CREATED, true)
             createDefaultNotificationChannel(activity!!)
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            switch_notify_bar.isChecked = isNotificationActive()
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun isNotificationActive(): Boolean {
+        var active = false
+        val manager = activity!!.getSystemService(NotificationManager::class.java)
+        for (statusBarNotification in manager.activeNotifications) {
+            if (statusBarNotification.id == NOTIFICATION_ID) {
+                active = true
+                break
+            }
+        }
+        return active
     }
 
     private fun setListeners() {
-//        LocalBroadcastManager.getInstance(activity!!)
-//                .registerReceiver(object : BroadcastReceiver() {
-//                    override fun onReceive(context: Context?, intent: Intent) {
-//                        if (intent.hasExtra(INTENT_ENABLE)) {
-//                            val enable = intent.getBooleanExtra(INTENT_ENABLE, false)
-//                            switch_barrier.isChecked = enable
-//                        }
-//                    }
-//                }, IntentFilter(INTENT_FILTER_ACTIVITY))
         switch_barrier.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
@@ -213,11 +240,11 @@ class SettingsFragment : Fragment() {
 
     private fun enableBarrier() {
         if (!isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)
-                || !BarrierApplication.instance.canDrawOverApps()) {
+                ) {
             showPermissionSettings()
         } else {
             val intent = Intent(INTENT_FILTER_ACCESSIBILITY)
-            intent.putExtra(INTENT_ENABLE, true)
+            intent.putExtra(INTENT_TOGGLE_BARRIER, true)
             LocalBroadcastManager.getInstance(activity!!)
                     .sendBroadcast(intent)
 
@@ -228,7 +255,7 @@ class SettingsFragment : Fragment() {
 
     private fun disableBarrier() {
         val intent = Intent(INTENT_FILTER_ACCESSIBILITY)
-        intent.putExtra(INTENT_ENABLE, false)
+        intent.putExtra(INTENT_TOGGLE_BARRIER, false)
         LocalBroadcastManager.getInstance(activity!!)
                 .sendBroadcast(intent)
     }

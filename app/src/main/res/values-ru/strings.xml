@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">Touch Barrier</string>
+    <string name="quick_tile_name">Включить барьер</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string-array name="lock_types">
+        <item>Нет</item>
+        <item>ПИН</item>
+        <item>Графический ключ</item>
+    </string-array>
+
+    <string name="title_notification">Раскройте для дополнительных настроек</string>
+    <string name="title_lock_config">Блокировка экрана</string>
+    <string name="close">Закрыть</string>
+    <string name="error_occurred">Произошла ошибка, попробуйте снова</string>
+    <string name="error_set_pattern_check">Графический ключ не совпадает, попробуйте еще раз</string>
+    <string name="error_set_pin_check">ПИН не совпадает, попробуйте еще раз</string>
+    <string name="set_pattern_success">Графический ключ сохранен</string>
+    <string name="set_pin_success">ПИН-код сохранен</string>
+    <string name="error_did_not_set_lock">Настройка блокировки отменена</string>
+    <string name="pattern_lock_start">Введите новый графический ключ</string>
+    <string name="pin_lock_start">Выберите ПИН-код</string>
+    <string name="pattern_lock_submit">Подтвердите графический ключ</string>
+    <string name="pin_lock_submit">Подтвердите ПИН-код</string>
+
+    <string name="tutorial_1">Показать поверх других приложений</string>
+    <string name="tutorial_1_desc">Это необходимо для запуска TouchBarrier поверх других приложений</string>
+    <string name="tutorial_2">Специальные возможности</string>
+    <string name="tutorial_2_desc">Это необходимо для исключения случайных нажатии на кнопки навигации</string>
+
+
+    <string name="try_deny_permission">Вы хотите запретить?</string>
+    <string name="permission_already_granted">Вы уже дали разрешение</string>
+    <string name="deny_permission">Да</string>
+
+    <string name="accessibility_service_description">Используется только для предотвращения случайных нажатий на кнопки навигации(Домой, Назад, Последние приложения) и на статус бар в активном режиме.\n\nПерсональные данные не собираются.</string>
+    <string name="notification_panel_settings">Настройки</string>
+    <string name="notification_panel_toggle">Включить</string>
+    <string name="double_tap_toast">Нажмите еще раз чтобы разблокировать</string>
+    <string name="notification_panel_name">Barrier Control Panel</string>
+    <string name="unlock_screen_to_toggle">Разблокируйте устройство для использования</string>
+
+    <string name="barrier_enable">Включить</string>
+    <string name="options_main_title">Основные</string>
+    <string name="options_main_notification_toggle">Панель уведомлений</string>
+    <string name="options_main_config_lock">Настроить блокировку</string>
+    <string name="options_second_close_on_unlock">Закрыть при разблокировке</string>
+    <string name="options_second_title">Дополнительные</string>
+    <string name="options_second_close_activity_on_enable">Закрыть настройки при включении</string>
+    <string name="options_permissions_title">Разрешения</string>
+    <string name="options_permissions_draw_over_others">Поверх других приложений</string>
+    <string name="options_permissions_accessibility_service">Специальные возможности</string>
+</resources>

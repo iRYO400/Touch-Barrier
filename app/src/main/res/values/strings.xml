@@ -1,41 +1,54 @@
 <resources>
     <string name="app_name">Touch Barrier</string>
+    <string name="quick_tile_name">Activate Barrier</string>
     <string name="title_activity_settings">Settings</string>
 
     <string-array name="lock_types">
         <item>None</item>
-        <item>Pin</item>
+        <item>PIN</item>
         <item>Pattern</item>
     </string-array>
 
-    <string name="title_notification">Раскройте для дополнительных настроек</string>
-    <string name="title_lock_config">Блокировка экрана</string>
-    <string name="close">Закрыть</string>
-    <string name="error_occurred">Произошла ошибка, попробуйте снова</string>
-    <string name="error_set_pattern_check">Графический ключ не совпадает, попробуйте еще раз</string>
-    <string name="error_set_pin_check">ПИН не совпадает, попробуйте еще раз</string>
-    <string name="set_pattern_success">Графический ключ сохранен</string>
-    <string name="set_pin_success">ПИН-код сохранен</string>
-    <string name="error_did_not_set_lock">Настройка блокировки отменена</string>
-    <string name="pattern_lock_start">Введите новый графический ключ</string>
-    <string name="pin_lock_start">Выберите ПИН-код</string>
-    <string name="pattern_lock_submit">Подтвердите графический ключ</string>
-    <string name="pin_lock_submit">Подтвердите ПИН-код</string>
+    <string name="title_notification">Drag down to show additional options</string>
+    <string name="title_lock_config">Screen lock</string>
+    <string name="close">Close</string>
+    <string name="error_occurred">Error occurred, please try again</string>
+    <string name="error_set_pattern_check">"Pattern does not match, try again "</string>
+    <string name="error_set_pin_check">"PIN key does not match, try again "</string>
+    <string name="set_pattern_success">Pattern saved</string>
+    <string name="set_pin_success">PIN saved</string>
+    <string name="error_did_not_set_lock">Lock configuration cancelled</string>
+    <string name="pattern_lock_start">"Draw new pattern "</string>
+    <string name="pattern_lock_submit">Draw pattern again to confirm</string>
+    <string name="pin_lock_submit">Confirm your PIN</string>
 
-    <string name="tutorial_1">Показать поверх других приложений</string>
-    <string name="tutorial_1_desc">Это необходимо для запуска TouchBarrier поверх других приложений</string>
-    <string name="tutorial_2">Специальные возможности</string>
-    <string name="tutorial_2_desc">Это необходимо для исключения случайных нажатии на кнопки навигации</string>
+    <string name="tutorial_1">Display over other apps</string>
+    <string name="tutorial_1_desc">This is required to run Touch Barrier on top of other apps and to prevent unexpected view touches</string>
+    <string name="tutorial_2">Accessibility Services</string>
 
 
-    <string name="try_deny_permission">Вы уверены в этом?</string>
-    <string name="permission_already_granted">Вы уже дали разрешение</string>
-    <string name="deny_permission">Запретить</string>
+    <string name="try_deny_permission">Do you want to disable?</string>
+    <string name="deny_permission">Yes</string>
 
     <string name="accessibility_service_description">Used only to prevent unexpected navigation touches(home, back, recent app buttons) and status bar when is active.\n\nNo personal data is collected.</string>
     <string name="notification_panel_settings">Settings</string>
-    <string name="notification_panel_toggle">Toggle</string>
-    <string name="double_tap_toast">Нажмите еще раз чтобы разблокировать</string>
+    <string name="double_tap_toast">Double tap to unlock</string>
     <string name="notification_panel_name">Barrier Control Panel</string>
+    <string name="unlock_screen_to_toggle">Unlock device to use</string>
+    <string name="notification_panel_toggle">Enable</string>
+    <string name="permission_already_granted">Permissions are already granted</string>
+    <string name="pin_lock_start">Choose your PIN</string>
+    <string name="tutorial_2_desc">This is required to prevent unexpected navigation touches(home, back, recent app buttons) and status bar when is active</string>
+
+    <string name="barrier_enable">Enable</string>
+    <string name="options_main_title">Main Options</string>
+    <string name="options_main_notification_toggle">Notification Bar</string>
+    <string name="options_main_config_lock">Configure lock</string>
+    <string name="options_second_close_on_unlock">Close when unlocking</string>
+    <string name="options_second_title">More options</string>
+    <string name="options_second_close_activity_on_enable">Close settings when enabled</string>
+    <string name="options_permissions_title">Permissions</string>
+    <string name="options_permissions_draw_over_others">Draw over other apps</string>
+    <string name="options_permissions_accessibility_service">Accessibility Services</string>
 
 </resources>
