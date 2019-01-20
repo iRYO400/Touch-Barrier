@@ -50,5 +50,16 @@
     <string name="options_permissions_title">Permissions</string>
     <string name="options_permissions_draw_over_others">Draw over other apps</string>
     <string name="options_permissions_accessibility_service">Accessibility Services</string>
+    <string name="screen_lock">Блокировка экрана</string>
+    <string name="none">None</string>
+    <string name="pin">PIN</string>
+    <string name="pattern">Pattern</string>
+    <string name="pin_desc">4-х значный цифровой код.</string>
+    <string name="pattern_desc">Комбинация из 9 точек.</string>
+    <string name="fingerprint">Fingerpring</string>
+    <string name="fingerprint_desc">System fingerprint.</string>
+    <string name="password">Password</string>
+    <string name="password_desc">Standart text password.</string>
+    <string name="screen_lock_default">Настроить</string>
 
 </resources>

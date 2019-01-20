@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lock_none"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="56dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="32dp"
+        android:paddingBottom="16dp"
+        android:text="@string/none"
+        android:textAppearance="@style/SingleLinePrimaryMediumText"
+        android:textSize="14sp" />
+
+
+    <LinearLayout
+        android:id="@+id/lock_pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="32dp"
+            android:text="@string/pin"
+            android:textAppearance="@style/SingleLinePrimaryMediumText"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="16dp"
+            android:text="@string/pin_desc"
+            android:textAppearance="@style/SingleLineSecondaryText"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/lock_pattern"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="32dp"
+            android:text="@string/pattern"
+            android:textAppearance="@style/SingleLinePrimaryMediumText"
+            android:textSize="14sp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="16dp"
+            android:text="@string/pattern_desc"
+            android:textAppearance="@style/SingleLineSecondaryText"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lock_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="32dp"
+            android:text="@string/password"
+            android:textAppearance="@style/SingleLinePrimaryMediumText"
+            android:textSize="14sp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="16dp"
+            android:text="@string/password_desc"
+            android:textAppearance="@style/SingleLineSecondaryText"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lock_fingerprint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="32dp"
+            android:text="@string/fingerprint"
+            android:textAppearance="@style/SingleLinePrimaryMediumText"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="56dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="16dp"
+            android:text="@string/fingerprint_desc"
+            android:textAppearance="@style/SingleLineSecondaryText"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>

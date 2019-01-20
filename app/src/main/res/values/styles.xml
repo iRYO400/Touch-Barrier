@@ -18,10 +18,10 @@
     </style>
 
 
-    <style name="ToolBar" parent="@style/Widget.AppCompat.Toolbar">
+    <style name="ToolBar" parent="@style/Widget.MaterialComponents.Toolbar">
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textColorPrimary">@color/colorWhite</item>
-        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorControlNormal">@color/black</item>
         <item name="contentInsetStart">0dp</item>
         <item name="contentInsetLeft">0dp</item>
         <item name="android:focusable">false</item>

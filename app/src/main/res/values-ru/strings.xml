@@ -10,7 +10,7 @@
     </string-array>
 
     <string name="title_notification">Раскройте для дополнительных настроек</string>
-    <string name="title_lock_config">Блокировка экрана</string>
+    <string name="title_lock_config">Настройка блокировки</string>
     <string name="close">Закрыть</string>
     <string name="error_occurred">Произошла ошибка, попробуйте снова</string>
     <string name="error_set_pattern_check">Графический ключ не совпадает, попробуйте еще раз</string>

@@ -1,1 +1,1 @@
-include ':app', ':StandOutLib'
+include ':app', ':pinlockview-release'
