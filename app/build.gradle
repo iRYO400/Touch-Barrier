@@ -31,11 +31,17 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    allprojects {
+        repositories {
+            maven { url "https://jitpack.io" }
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':pinlockview-release')
+    implementation project(':patternlockview')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -53,8 +59,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 
-//    implementation 'com.andrognito.pinlockview:pinlockview:2.1.0'
-    implementation 'com.andrognito.patternlockview:patternlockview:1.0.0'
+    implementation 'com.github.HenriqueMachine:EasyFingerPrint:1.0.1'
     implementation 'com.orhanobut:hawk:2.0.1'
 
 }

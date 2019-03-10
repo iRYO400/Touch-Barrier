@@ -7,7 +7,7 @@ enum class ScreenLockType(private val resourceName: Int) {
     PIN(R.string.pin),
     PATTERN(R.string.pattern);
 
-    public fun getName(): Int {
+    fun getName(): Int {
         return resourceName
     }
 }

@@ -101,11 +101,6 @@ class IntroFragment : Fragment() {
 
     private fun checkPermissions() {
         var allPermissionAccepted = true
-
-//        if (Build.VERSION.SDK_INT >= 23 && !BarrierApplication.instance.canDrawOverApps()) {
-//            allPermissionAccepted = false
-//        }
-
         if (!isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)) {
             allPermissionAccepted = false
         }

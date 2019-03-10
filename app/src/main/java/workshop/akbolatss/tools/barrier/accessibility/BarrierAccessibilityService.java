@@ -1,8 +1,11 @@
 package workshop.akbolatss.tools.barrier.accessibility;
 
 import android.accessibilityservice.AccessibilityService;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,8 +15,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,8 +26,6 @@ import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
-import com.andrognito.pinlockview.view.PinLockListener;
-import com.andrognito.pinlockview.view.PinLockView;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
@@ -38,27 +37,39 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import workshop.akbolatss.tools.barrier.R;
 import workshop.akbolatss.tools.barrier.ui.common.PatterLockViewImpl;
-import workshop.akbolatss.tools.barrier.ui.common.PinLockViewImpl;
 import workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockType;
 
-import static workshop.akbolatss.tools.barrier.quick_tile.QuickTilesService.TAG;
 import static workshop.akbolatss.tools.barrier.utils.HawkKeys.LOCK_TYPE_INDEX;
 import static workshop.akbolatss.tools.barrier.utils.HawkKeys.PATTERN_DOTS;
-import static workshop.akbolatss.tools.barrier.utils.HawkKeys.PIN_CODE;
 import static workshop.akbolatss.tools.barrier.utils.IntentKeys.INTENT_FILTER_ACCESSIBILITY;
 import static workshop.akbolatss.tools.barrier.utils.IntentKeys.INTENT_TOGGLE_BARRIER;
 
 public class BarrierAccessibilityService extends AccessibilityService {
 
+    /**
+     * Root view of barrier. Instantiates when service is connected
+     */
     private FrameLayout mRoot;
-
+    /**
+     * Background of Barrier view
+     */
     private View background;
+    /**
+     * Group of one or several views. Used at creating to easily control visibility of group views
+     */
     private Group container;
+    /**
+     * Type of lock {@link ScreenLockType}
+     */
     private ScreenLockType lockType;
+    /**
+     * Var of lock view. Can be {@link PatternLockView}, or...
+     */
+    private View lockView;
 
     private final ClearFocusTimer clearFocusTimer = new ClearFocusTimer();
 
-    public static MutableLiveData<Boolean> barrierState = new MutableLiveData<>();
+    public static MutableLiveData<Boolean> isBarrierEnabled = new MutableLiveData<>();
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -72,7 +83,7 @@ public class BarrierAccessibilityService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         mRoot = new FrameLayout(this);
-        barrierState.setValue(false);
+        isBarrierEnabled.setValue(false);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
@@ -89,21 +100,34 @@ public class BarrierAccessibilityService extends AccessibilityService {
                 enableUntouchableView();
             else
                 disableUntouchableView();
-
         }
     }
 
     private void enableUntouchableView() {
         KeyguardManager myKM = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if (myKM.inKeyguardRestrictedInputMode()) {
-            Log.d(TAG, "enableUntouchableView: app is locked");
             return;
         }
 
-        barrierState.setValue(true);
+        isBarrierEnabled.setValue(true);
 
+        View view = createView();
 
-        // Create an overlay and display the action bar
+        initView(view);
+        initLockScreen(view);
+
+        unFocusViewOnTouch(view);
+
+        Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        sendBroadcast(it);
+    }
+
+    /**
+     * Create an overlay based on {@link WINDOW_SERVICE}
+     *
+     * @return created view
+     */
+    private View createView() {
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         final WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
@@ -117,28 +141,21 @@ public class BarrierAccessibilityService extends AccessibilityService {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.barrier_view, mRoot);
         wm.addView(mRoot, lp);
-
-        setView(view);
-        initLockScreen(view);
-
-        unFocusViewOnTouch(view);
-
-        Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        sendBroadcast(it);
+        return view;
     }
 
 
     private void disableUntouchableView() {
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         try {
-            barrierState.setValue(false);
+            isBarrierEnabled.setValue(false);
             wm.removeView(mRoot);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
 
-    private void setView(View view) {
+    private void initView(View view) {
         background = view.findViewById(R.id.background);
         container = background.findViewById(R.id.container);
     }
@@ -153,12 +170,9 @@ public class BarrierAccessibilityService extends AccessibilityService {
 
     private void initLockScreen(View view) {
         getLockType();
-
-        if (lockType == ScreenLockType.PIN) {
-            container.setReferencedIds(new int[]{R.id.pin_lock_view, R.id.indicator_dots});
-            setPinLock(view);
-        } else if (lockType == ScreenLockType.PATTERN) {
-            container.setReferencedIds(new int[]{R.id.pattern_lock_view});
+        container.setReferencedIds(new int[]{R.id.app_icon});
+        if (lockType == ScreenLockType.PATTERN) {
+            container.setReferencedIds(new int[]{R.id.pattern_lock_view, R.id.app_icon});
             setPatternLock(view);
         } else {
             ImageView icon = view.findViewById(R.id.app_icon);
@@ -179,23 +193,9 @@ public class BarrierAccessibilityService extends AccessibilityService {
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
-    private void setPinLock(View view) {
-        PinLockView pinLockView = view.findViewById(R.id.pin_lock_view);
-        pinLockView.attachIndicatorDots(view.findViewById(R.id.indicator_dots));
-        PinLockListener pinListener = new PinLockViewImpl() {
-            @Override
-            public void onComplete(String pin) {
-                String hawkPin = Hawk.get(PIN_CODE);
-                if (TextUtils.equals(pin, hawkPin))
-                    lockSucceeded();
-            }
-        };
-        pinLockView.setPinLockListener(pinListener);
-        view.findViewById(R.id.indicator_dots).setVisibility(View.VISIBLE);
-    }
-
     private void setPatternLock(View view) {
-        PatternLockView patternLockView = view.findViewById(R.id.pattern_lock_view);
+        lockView = view.findViewById(R.id.pattern_lock_view);
+        PatternLockView patternLockView = (PatternLockView) lockView;
         PatternLockViewListener patternListener = new PatterLockViewImpl() {
             @Override
             public void onComplete(List<PatternLockView.Dot> pattern) {
@@ -218,6 +218,7 @@ public class BarrierAccessibilityService extends AccessibilityService {
                     return;
                 }
                 patternLockView.setViewMode(PatternLockView.PatternViewMode.CORRECT);
+                patternLockView.clearPattern();
                 lockSucceeded();
             }
         };
@@ -270,6 +271,14 @@ public class BarrierAccessibilityService extends AccessibilityService {
 
         if (colorAnimator == null)
             return;
+        colorAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (lockType == ScreenLockType.PATTERN)
+                    ((PatternLockView) lockView).clearPattern();
+            }
+        });
         colorAnimator.setDuration(500);
         colorAnimator.setEvaluator(new ArgbEvaluator());
         colorAnimator.start();
@@ -277,7 +286,7 @@ public class BarrierAccessibilityService extends AccessibilityService {
 
     public class ClearFocusTimer extends CountDownTimer {
 
-        private static final int DELAY_MILLIS = 2000;
+        private static final int DELAY_MILLIS = 4000;
         private static final int INTERVAL = 1000;
 
         ClearFocusTimer() {

@@ -14,4 +14,9 @@
     <color name="transparent">#00000000</color>
     <color name="grey_trans">#AA000000</color>
     <color name="black">#000000</color>
+
+    <color name="pattern_normal">#37474F</color>
+    <color name="pattern_normal_barrier">#ffffff</color>
+    <color name="pattern_correct">#115EFB</color>
+    <color name="pattern_wrong">#FF0000</color>
 </resources>

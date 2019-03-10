@@ -18,6 +18,7 @@
     <string name="set_pattern_success">Графический ключ сохранен</string>
     <string name="set_pin_success">ПИН-код сохранен</string>
     <string name="error_did_not_set_lock">Настройка блокировки отменена</string>
+    <string name="set_lock_success">Настройки блокировки сохранены</string>
     <string name="pattern_lock_start">Введите новый графический ключ</string>
     <string name="pin_lock_start">Выберите ПИН-код</string>
     <string name="pattern_lock_submit">Подтвердите графический ключ</string>
@@ -50,4 +51,15 @@
     <string name="options_permissions_title">Разрешения</string>
     <string name="options_permissions_draw_over_others">Поверх других приложений</string>
     <string name="options_permissions_accessibility_service">Специальные возможности</string>
+    <string name="screen_lock">Блокировка экрана</string>
+    <string name="none">Нет (дважды клик на иконку)</string>
+    <string name="pin">PIN</string>
+    <string name="pattern">Рисунок</string>
+    <string name="pin_desc">4-х значный цифровой код</string>
+    <string name="pattern_desc">Комбинация до 9 точек</string>
+    <string name="fingerprint">По отпечатку пальца</string>
+    <string name="password">Пароль</string>
+    <string name="password_desc">Стандартный пароль</string>
+    <string name="screen_lock_default">Настроить</string>
+    <string name="fingerprint_desc">Отпечаток пальца системы</string>
 </resources>

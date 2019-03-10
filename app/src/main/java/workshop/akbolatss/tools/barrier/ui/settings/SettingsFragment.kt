@@ -73,7 +73,7 @@ class SettingsFragment : Fragment() {
      * Observers
      */
     private fun setObservers() {
-        BarrierAccessibilityService.barrierState.observe(this, Observer {
+        BarrierAccessibilityService.isBarrierEnabled.observe(this, Observer {
             var barrierState = it
             if (barrierState == null)
                 barrierState = false
@@ -184,7 +184,7 @@ class SettingsFragment : Fragment() {
         }
 
         screen_lock.setOnClickListener {
-            val intent = Intent(activity, ScreenLockListActivity::class.java)
+            val intent = Intent(activity, ScreenLockListActivity::class.java) //TODO: There is hidden old lock settings
             startActivityForResult(intent, REQUEST_SET_LOCK)
         }
     }

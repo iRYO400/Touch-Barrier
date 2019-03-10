@@ -1,64 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="workshop.akbolatss.tools.barrier.ui.SettingsActivity">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ToolBar"
-            app:title="@string/title_lock_config" />
-    </com.google.android.material.appbar.AppBarLayout>
-
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="80dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_lock_outline_black_24dp" />
 
         <TextView
             android:id="@+id/status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:text="@string/pattern_lock_start"
             android:textAppearance="@style/SingleLinePrimaryText"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/pattern_lock_start" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
         <com.andrognito.patternlockview.PatternLockView
             android:id="@+id/pattern_lock_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:visibility="gone"
-            app:correctStateColor="@color/colorPrimary"
+            android:layout_marginBottom="64dp"
+            android:minWidth="320dp"
+            android:minHeight="320dp"
+            app:aspectRatio="square"
+            app:aspectRatioEnabled="true"
+            app:correctStateColor="@color/pattern_correct"
             app:dotCount="3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/status"
-            app:normalStateColor="@color/greyDark"
-            app:wrongStateColor="@color/pomegranate" />
+            app:normalStateColor="@color/pattern_normal"
+            app:wrongStateColor="@color/pattern_wrong" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -8,12 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import com.orhanobut.hawk.Hawk
 import kotlinx.android.synthetic.main.activity_screen_lock_list.*
 import workshop.akbolatss.tools.barrier.R
-import workshop.akbolatss.tools.barrier.ui.lock_screen.pin.PinLockCallback
+import workshop.akbolatss.tools.barrier.ui.lock_screen.pattern.PatternLockCallback
 import workshop.akbolatss.tools.barrier.ui.lock_screen.setup.SetupFragmentCallback
 import workshop.akbolatss.tools.barrier.utils.HawkKeys
 import workshop.akbolatss.tools.barrier.utils.IntentKeys.Companion.SCREEN_LOCK_TYPE
 
-class ScreenLockListActivity : AppCompatActivity(), SetupFragmentCallback, PinLockCallback {
+class ScreenLockListActivity : AppCompatActivity(), SetupFragmentCallback, PatternLockCallback {
 
     private var currentTabTag: MutableLiveData<String> = MutableLiveData()
 
@@ -64,7 +64,7 @@ class ScreenLockListActivity : AppCompatActivity(), SetupFragmentCallback, PinLo
     }
 
     override fun onSelectedPin() {
-        navigateToTab(ScreenLockTab.PIN)
+//        navigateToTab(ScreenLockTab.PIN)
     }
 
     override fun onSelectedPattern() {
@@ -82,13 +82,10 @@ class ScreenLockListActivity : AppCompatActivity(), SetupFragmentCallback, PinLo
     override fun onBack(screenLockType: ScreenLockType) {
         when (screenLockType) {
             ScreenLockType.NONE -> {
-
-            }
-            ScreenLockType.PIN -> {
-
+                Hawk.put(HawkKeys.LOCK_TYPE_INDEX, ScreenLockType.NONE)
             }
             ScreenLockType.PATTERN -> {
-
+                Hawk.put(HawkKeys.LOCK_TYPE_INDEX, ScreenLockType.PATTERN)
             }
         }
         onBackSuccess(screenLockType)

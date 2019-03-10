@@ -28,7 +28,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockActivity" />
         <activity android:name="workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockListActivity" />
 
         <!-- Services -->

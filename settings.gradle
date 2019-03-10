@@ -1,1 +1,1 @@
-include ':app', ':pinlockview-release'
+include ':app', ':patternlockview'

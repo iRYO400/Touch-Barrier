@@ -18,6 +18,7 @@
     <string name="set_pattern_success">Pattern saved</string>
     <string name="set_pin_success">PIN saved</string>
     <string name="error_did_not_set_lock">Lock configuration cancelled</string>
+    <string name="set_lock_success">Lock configuration saved</string>
     <string name="pattern_lock_start">"Draw new pattern "</string>
     <string name="pattern_lock_submit">Draw pattern again to confirm</string>
     <string name="pin_lock_submit">Confirm your PIN</string>
@@ -50,16 +51,16 @@
     <string name="options_permissions_title">Permissions</string>
     <string name="options_permissions_draw_over_others">Draw over other apps</string>
     <string name="options_permissions_accessibility_service">Accessibility Services</string>
-    <string name="screen_lock">Блокировка экрана</string>
-    <string name="none">None</string>
+    <string name="screen_lock">Lock Screen</string>
+    <string name="none">None (double tap to icon)</string>
     <string name="pin">PIN</string>
     <string name="pattern">Pattern</string>
-    <string name="pin_desc">4-х значный цифровой код.</string>
-    <string name="pattern_desc">Комбинация из 9 точек.</string>
+    <string name="pin_desc">4-digit code</string>
+    <string name="pattern_desc">A combination of up to 9 points</string>
     <string name="fingerprint">Fingerpring</string>
-    <string name="fingerprint_desc">System fingerprint.</string>
+    <string name="fingerprint_desc">System fingerprint</string>
     <string name="password">Password</string>
-    <string name="password_desc">Standart text password.</string>
-    <string name="screen_lock_default">Настроить</string>
+    <string name="password_desc">Standart text password</string>
+    <string name="screen_lock_default">Configure</string>
 
 </resources>
