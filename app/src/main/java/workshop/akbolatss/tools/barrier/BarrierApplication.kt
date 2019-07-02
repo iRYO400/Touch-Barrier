@@ -8,15 +8,14 @@ import com.orhanobut.hawk.Hawk
 
 class BarrierApplication : Application() {
 
+    companion object {
+        lateinit var instance: BarrierApplication
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
         Hawk.init(applicationContext).build()
-    }
-
-
-    companion object {
-        lateinit var instance: BarrierApplication
     }
 
     @TargetApi(Build.VERSION_CODES.M)
