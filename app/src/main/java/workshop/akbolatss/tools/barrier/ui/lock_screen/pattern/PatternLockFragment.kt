@@ -25,7 +25,7 @@ class PatternLockFragment : Fragment() {
 
     private lateinit var callback: PatternLockCallback
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = (context as ScreenLockListActivity)
     }

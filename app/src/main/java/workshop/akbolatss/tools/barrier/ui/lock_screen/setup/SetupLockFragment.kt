@@ -19,7 +19,7 @@ class SetupLockFragment : Fragment() {
 
     private lateinit var callback: SetupFragmentCallback
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = (context as ScreenLockListActivity)
     }

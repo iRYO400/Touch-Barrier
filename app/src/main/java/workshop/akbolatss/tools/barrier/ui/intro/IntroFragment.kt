@@ -10,17 +10,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.PagerSnapHelper
 import kotlinx.android.synthetic.main.intro_fragment.*
 import workshop.akbolatss.tools.barrier.BarrierApplication
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.accessibility.AccessibilityServiceHelper.isAccessibilityServiceEnabled
 import workshop.akbolatss.tools.barrier.accessibility.BarrierAccessibilityService
+import workshop.akbolatss.tools.barrier.ui.SettingsActivity
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.ActionType
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.IntroAction
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.IntroAdapter
-import workshop.akbolatss.tools.barrier.ui.SettingsActivity
 
 class IntroFragment : Fragment() {
 
@@ -34,7 +34,7 @@ class IntroFragment : Fragment() {
 
     private lateinit var callback: IntroFragmentCallback
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = (context as SettingsActivity)
     }
@@ -46,7 +46,7 @@ class IntroFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(IntroViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(IntroViewModel::class.java)
 
         initAdapter()
     }
@@ -72,6 +72,7 @@ class IntroFragment : Fragment() {
                 ActionType.OPEN_ACCESSIBILITY_SETTINGS -> {
                     openAccessibilitySettings()
                 }
+                else -> Unit
             }
         }
         recycler_view.adapter = adapter

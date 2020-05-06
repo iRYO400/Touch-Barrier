@@ -15,7 +15,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.orhanobut.hawk.Hawk
 import kotlinx.android.synthetic.main.settings_fragment.*
@@ -49,7 +49,7 @@ class SettingsFragment : Fragment() {
 
     private lateinit var callback: SettingsFragmentCallback
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = (context as SettingsActivity)
     }
@@ -62,7 +62,7 @@ class SettingsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
 
         setDefault()
         setListeners()
@@ -73,7 +73,7 @@ class SettingsFragment : Fragment() {
      * Observers
      */
     private fun setObservers() {
-        BarrierAccessibilityService.isBarrierEnabled.observe(this, Observer {
+        BarrierAccessibilityService.isBarrierEnabled.observe(viewLifecycleOwner, Observer {
             var barrierState = it
             if (barrierState == null)
                 barrierState = false
@@ -117,7 +117,7 @@ class SettingsFragment : Fragment() {
     private fun isNotificationActive(): Boolean {
         var active = false
         val manager = activity!!.getSystemService(NotificationManager::class.java)
-        for (statusBarNotification in manager.activeNotifications) {
+        for (statusBarNotification in manager!!.activeNotifications) {
             if (statusBarNotification.id == NOTIFICATION_ID) {
                 active = true
                 break

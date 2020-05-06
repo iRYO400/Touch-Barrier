@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Touch-Barrier.iml" filepath="$PROJECT_DIR$/.idea/Touch-Barrier.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/patternlockview/patternlockview.iml" filepath="$PROJECT_DIR$/patternlockview/patternlockview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Touch-Barrier.iml" filepath="$PROJECT_DIR$/Touch-Barrier.iml" group="Touch-Barrier" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Touch-Barrier/app" />
+      <module fileurl="file://$PROJECT_DIR$/patternlockview/patternlockview.iml" filepath="$PROJECT_DIR$/patternlockview/patternlockview.iml" group="Touch-Barrier/patternlockview" />
     </modules>
   </component>
 </project>
