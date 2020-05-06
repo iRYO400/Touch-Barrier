@@ -1,8 +1,6 @@
 package workshop.akbolatss.tools.barrier.ui.settings
 
-import android.annotation.TargetApi
 import android.app.Activity
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -11,8 +9,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.view.animation.AnimationUtils
-import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.orhanobut.hawk.Hawk
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
@@ -27,10 +23,8 @@ import workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockListActivity
 import workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockType
 import workshop.akbolatss.tools.barrier.utils.HawkKeys
 import workshop.akbolatss.tools.barrier.utils.IntentKeys
-import workshop.akbolatss.tools.barrier.utils.IntentKeys.Companion.INTENT_FILTER_ACCESSIBILITY
-import workshop.akbolatss.tools.barrier.utils.IntentKeys.Companion.INTENT_TOGGLE_BARRIER
 import workshop.akbolatss.tools.barrier.utils.NotificationExt.createDefaultNotificationChannel
-import workshop.akbolatss.tools.barrier.utils.NotificationKeys.Companion.NOTIFICATION_ID
+import workshop.akbolatss.tools.barrier.utils.livedata.EventObserver
 import workshop.akbolatss.tools.barrier.utils.showSnackbarError
 
 class SettingsFragment(
@@ -87,41 +81,24 @@ class SettingsFragment(
             Hawk.put(HawkKeys.NOTIFY_CHANNEL_CREATED, true)
             createDefaultNotificationChannel(activity!!)
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            binding.switchNotifyBar.isChecked = isNotificationActive()
     }
 
     override fun setObserversListeners() {
-        setObservers()
+        observeViewModel()
         setListeners()
     }
 
-    /**
-     * Observers
-     */
-    private fun setObservers() {
-        BarrierAccessibilityService.isBarrierEnabled.observe(viewLifecycleOwner, Observer {
-            var barrierState = it
-            if (barrierState == null)
-                barrierState = false
-
-            binding.switchBarrier.isChecked = barrierState
+    private fun observeViewModel() {
+        viewModel.accessibleServiceDisabled.observe(viewLifecycleOwner, EventObserver {
+            if (it)
+                showPermissionSettings()
         })
     }
 
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun isNotificationActive(): Boolean {
-        var active = false
-        val manager = activity!!.getSystemService(NotificationManager::class.java)
-        for (statusBarNotification in manager!!.activeNotifications) {
-            if (statusBarNotification.id == NOTIFICATION_ID) {
-                active = true
-                break
-            }
-        }
-        return active
+    private fun showPermissionSettings() {
+        callback.scrollView()
+        val animationShake = AnimationUtils.loadAnimation(requireContext(), R.anim.anim_shake)
+        binding.permInfo.startAnimation(animationShake)
     }
 
     private fun setListeners() {
@@ -129,10 +106,7 @@ class SettingsFragment(
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
-            if (isChecked)
-                enableBarrier()
-            else
-                disableBarrier()
+            viewModel.toggleBarrier(isChecked)
         }
 
         binding.switchNotifyBar.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -213,34 +187,6 @@ class SettingsFragment(
         startActivity(intent)
     }
 
-    private fun enableBarrier() {
-        if (!isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)
-        ) {
-            showPermissionSettings()
-        } else {
-            val intent = Intent(INTENT_FILTER_ACCESSIBILITY)
-            intent.putExtra(INTENT_TOGGLE_BARRIER, true)
-            LocalBroadcastManager.getInstance(activity!!)
-                .sendBroadcast(intent)
-
-            if (binding.switchCloseOnActivation.isChecked)
-                activity!!.finish()
-        }
-    }
-
-    private fun disableBarrier() {
-        val intent = Intent(INTENT_FILTER_ACCESSIBILITY)
-        intent.putExtra(INTENT_TOGGLE_BARRIER, false)
-        LocalBroadcastManager.getInstance(activity!!)
-            .sendBroadcast(intent)
-    }
-
-    private fun showPermissionSettings() {
-        binding.switchBarrier.isChecked = false
-        callback.scrollView()
-        val animationShake = AnimationUtils.loadAnimation(activity!!, R.anim.anim_shake)
-        binding.permInfo.startAnimation(animationShake)
-    }
 
     override fun onResume() {
         super.onResume()

@@ -27,9 +27,9 @@ class RootActivity : AppCompatActivity(), IntroFragmentCallback, SettingsFragmen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_root)
 
-        if (Hawk.get(IS_FIRST_START, true))
-            navigateToTab(NavigationTab.TUTORIAL)
-        else
+//        if (Hawk.get(IS_FIRST_START, true))
+//            navigateToTab(NavigationTab.TUTORIAL)
+//        else
             navigateToTab(NavigationTab.SETTINGS)
     }
 
