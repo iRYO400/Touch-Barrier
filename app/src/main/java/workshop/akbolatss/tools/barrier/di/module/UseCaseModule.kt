@@ -1,10 +1,7 @@
 package workshop.akbolatss.tools.barrier.di.module
 
 import org.koin.dsl.module
-import workshop.akbolatss.tools.barrier.domain.usecase.GetBarrierState
-import workshop.akbolatss.tools.barrier.domain.usecase.GetNotificationPanelState
-import workshop.akbolatss.tools.barrier.domain.usecase.ToggleBarrier
-import workshop.akbolatss.tools.barrier.domain.usecase.ToggleNotificationPanel
+import workshop.akbolatss.tools.barrier.domain.usecase.*
 import workshop.akbolatss.tools.barrier.ui.SettingsInteractors
 
 val useCaseModule = module {
@@ -13,7 +10,9 @@ val useCaseModule = module {
             getBarrierState = GetBarrierState(get()),
             toggleBarrier = ToggleBarrier(get()),
             getNotificationPanelState = GetNotificationPanelState(get()),
-            toggleNotificationPanel = ToggleNotificationPanel(get())
+            toggleNotificationPanel = ToggleNotificationPanel(get()),
+            getCloseOnActivationState = GetCloseOnActivationState(get()),
+            toggleCloseOnActivation = ToggleCloseOnActivation(get())
         )
     }
 }

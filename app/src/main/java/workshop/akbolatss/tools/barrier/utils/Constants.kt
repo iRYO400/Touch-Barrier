@@ -30,8 +30,6 @@ interface HawkKeys {
 
         const val IS_FIRST_START = "ShowTutorialFragment"
 
-        const val CLOSE_ON_ACTIVATION = "ShouldCloseOnActivation"
-
         const val LOCK_TYPE_INDEX = "LockTypeIndex"
 
         const val NOTIFY_CHANNEL_CREATED = "isNotifyChannelCreated"

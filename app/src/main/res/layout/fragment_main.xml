@@ -19,8 +19,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -257,6 +256,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="4dp"
+                        android:checked="@{viewModel.isCloseOnActivationEnabled}"
                         android:paddingVertical="8dp"
                         android:text="@string/options_second_close_activity_on_enable"
                         app:layout_constraintEnd_toEndOf="parent"

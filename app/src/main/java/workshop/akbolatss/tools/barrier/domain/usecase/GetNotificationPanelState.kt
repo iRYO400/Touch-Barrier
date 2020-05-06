@@ -5,7 +5,7 @@ import workshop.akbolatss.tools.barrier.base.BaseUseCase
 import workshop.akbolatss.tools.barrier.base.None
 import workshop.akbolatss.tools.barrier.base.resources.Either
 import workshop.akbolatss.tools.barrier.base.resources.Failure
-import workshop.akbolatss.tools.barrier.notification.NotificationPreferences
+import workshop.akbolatss.tools.barrier.preference.NotificationPreferences
 
 class GetNotificationPanelState(
     private val notificationPreferences: NotificationPreferences

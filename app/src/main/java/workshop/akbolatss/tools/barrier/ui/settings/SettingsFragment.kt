@@ -66,11 +66,6 @@ class SettingsFragment(
             Hawk.put(HawkKeys.LOCK_TYPE_INDEX, ScreenLockType.NONE)
         }
 
-        if (Hawk.contains(HawkKeys.CLOSE_ON_ACTIVATION))
-            binding.switchCloseOnActivation.isChecked = Hawk.get(HawkKeys.CLOSE_ON_ACTIVATION)
-        else
-            Hawk.put(HawkKeys.CLOSE_ON_ACTIVATION, false)
-
         if (!Hawk.contains(HawkKeys.NOTIFY_CHANNEL_CREATED)) {
             Hawk.put(HawkKeys.NOTIFY_CHANNEL_CREATED, true)
             createDefaultNotificationChannel(activity!!)
@@ -114,7 +109,7 @@ class SettingsFragment(
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
-            Hawk.put(HawkKeys.CLOSE_ON_ACTIVATION, isChecked)
+            viewModel.toggleCloseOnActivation(isChecked)
         }
 
         binding.switchPermDrawOver.setOnCheckedChangeListener { buttonView, isChecked ->

@@ -1,4 +1,4 @@
-package workshop.akbolatss.tools.barrier.notification
+package workshop.akbolatss.tools.barrier.preference
 
 import android.content.Context
 import android.content.Intent

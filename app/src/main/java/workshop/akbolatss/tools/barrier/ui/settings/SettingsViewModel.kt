@@ -5,10 +5,7 @@ import workshop.akbolatss.tools.barrier.base.BaseViewModel
 import workshop.akbolatss.tools.barrier.base.resources.Failure
 import workshop.akbolatss.tools.barrier.base.resources.onFailure
 import workshop.akbolatss.tools.barrier.base.resources.onSuccess
-import workshop.akbolatss.tools.barrier.domain.usecase.GetBarrierState
-import workshop.akbolatss.tools.barrier.domain.usecase.GetNotificationPanelState
-import workshop.akbolatss.tools.barrier.domain.usecase.ToggleBarrier
-import workshop.akbolatss.tools.barrier.domain.usecase.ToggleNotificationPanel
+import workshop.akbolatss.tools.barrier.domain.usecase.*
 import workshop.akbolatss.tools.barrier.ui.SettingsInteractors
 import workshop.akbolatss.tools.barrier.utils.livedata.Event
 
@@ -20,9 +17,12 @@ class SettingsViewModel(
     val accessibleServiceDisabled = MutableLiveData<Event<Boolean>>()
     val isNotificationPanelEnabled = MutableLiveData<Boolean>()
 
+    val isCloseOnActivationEnabled = MutableLiveData<Boolean>()
+
     init {
         getBarrierState()
         getNotificationState()
+        getCloseOnActivationState()
     }
 
     private fun getBarrierState() {
@@ -39,6 +39,15 @@ class SettingsViewModel(
             interactors.getNotificationPanelState(scope, GetNotificationPanelState.Params())
                 .onSuccess {
                     isNotificationPanelEnabled.value = it
+                }
+        }
+    }
+
+    private fun getCloseOnActivationState() {
+        executeUseCase { scope ->
+            interactors.getCloseOnActivationState(scope, GetCloseOnActivationState.Params())
+                .onSuccess {
+                    isCloseOnActivationEnabled.value = it
                 }
         }
     }
@@ -63,6 +72,15 @@ class SettingsViewModel(
                         accessibleServiceDisabled.value = Event(true)
 
                     isBarrierEnabled.value = false
+                }
+        }
+    }
+
+    fun toggleCloseOnActivation(isEnabled: Boolean) {
+        executeUseCase { scope ->
+            interactors.toggleCloseOnActivation(scope, ToggleCloseOnActivation.Params(isEnabled))
+                .onSuccess {
+                    isCloseOnActivationEnabled.value = it
                 }
         }
     }
