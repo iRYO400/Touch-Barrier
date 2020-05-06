@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import workshop.akbolatss.tools.barrier.accessibility.AccessibilityServiceHelper
-import workshop.akbolatss.tools.barrier.accessibility.BarrierAccessibilityService
 import workshop.akbolatss.tools.barrier.utils.IntentKeys
 
 class BarrierPreferences(
@@ -13,37 +11,12 @@ class BarrierPreferences(
     private val sharedPreferences: SharedPreferences
 ) {
 
-    companion object {
-        const val SHARED_BARRIER_ENABLED = "_barrierEnabled"
-
-    }
-
-    fun isEnabled(): Boolean {
-        val isEnabled = sharedPreferences.getBoolean(SHARED_BARRIER_ENABLED, false)
-        val isReallyEnabled = isAccessibleServiceEnabled()
-
-        if (isEnabled && isReallyEnabled)
-            return true
-
-        return toggle(isEnabled)
-    }
-
-    fun isAccessibleServiceEnabled(): Boolean {
-        return AccessibilityServiceHelper.isAccessibilityServiceEnabled(
-            context, BarrierAccessibilityService::class.java
-        )
-    }
-
     fun toggle(enable: Boolean): Boolean {
         if (enable)
             enableBarrier()
         else
             disableBarrier()
 
-        sharedPreferences.edit().apply {
-            putBoolean(SHARED_BARRIER_ENABLED, enable)
-            apply()
-        }
         return enable
     }
 

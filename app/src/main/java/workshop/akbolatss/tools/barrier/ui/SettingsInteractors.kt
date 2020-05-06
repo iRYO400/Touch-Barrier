@@ -8,5 +8,7 @@ data class SettingsInteractors(
     val getNotificationPanelState: GetNotificationPanelState,
     val toggleNotificationPanel: ToggleNotificationPanel,
     val getCloseOnActivationState: GetCloseOnActivationState,
-    val toggleCloseOnActivation: ToggleCloseOnActivation
+    val toggleCloseOnActivation: ToggleCloseOnActivation,
+    val getAccessibilityServiceState: GetAccessibilityServiceState,
+    val toggleAccessibilityService: ToggleAccessibilityService
 )

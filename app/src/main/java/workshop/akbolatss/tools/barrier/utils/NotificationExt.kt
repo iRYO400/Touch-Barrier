@@ -21,29 +21,34 @@ object NotificationExt {
     /**
      * Create default notification channel
      */
-    fun createDefaultNotificationChannel(context: Context) {
+    fun Context.createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                getNotificationChannelId(context),
-                getNotificationChannelName(context),
+            val channelId = getNotificationChannelId(this)
+            val newChannel = NotificationChannel(
+                channelId,
+                getNotificationChannelName(this),
                 NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.enableLights(false)
-            channel.enableVibration(true)
-            channel.lockscreenVisibility = VISIBILITY_SECRET
-            channel.vibrationPattern = longArrayOf(100, 200, 300)
-            channel.importance = NotificationManager.IMPORTANCE_LOW
-            val manager = context.getSystemService(NotificationManager::class.java)
-            manager!!.createNotificationChannel(channel)
-        }
-    }
+            ).apply {
+                enableLights(false)
+                enableVibration(true)
+                lockscreenVisibility = VISIBILITY_SECRET
+                vibrationPattern = longArrayOf(100, 200, 300)
+                importance = NotificationManager.IMPORTANCE_LOW
+            }
 
-    private fun getNotificationChannelName(context: Context): CharSequence {
-        return context.getString(R.string.notification_panel_name)
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            val oldChannel = notificationManager?.getNotificationChannel(channelId)
+            if (oldChannel == null)
+                notificationManager?.createNotificationChannel(newChannel)
+        }
     }
 
     private fun getNotificationChannelId(context: Context): String {
         return context.packageName
+    }
+
+    private fun getNotificationChannelName(context: Context): CharSequence {
+        return context.getString(R.string.notification_panel_name)
     }
 
     private fun getNotificationId(): Int {

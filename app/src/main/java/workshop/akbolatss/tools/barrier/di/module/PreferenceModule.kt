@@ -5,6 +5,7 @@ import org.koin.dsl.module
 import workshop.akbolatss.tools.barrier.preference.AdditionalPreferences
 import workshop.akbolatss.tools.barrier.preference.BarrierPreferences
 import workshop.akbolatss.tools.barrier.preference.NotificationPreferences
+import workshop.akbolatss.tools.barrier.preference.PermissionPreferences
 
 val preferenceModule = module {
     single {
@@ -24,6 +25,12 @@ val preferenceModule = module {
     single {
         AdditionalPreferences(
             sharedPreferences = get()
+        )
+    }
+
+    single {
+        PermissionPreferences(
+            context = androidContext()
         )
     }
 }

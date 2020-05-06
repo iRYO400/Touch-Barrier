@@ -3,13 +3,14 @@ package workshop.akbolatss.tools.barrier.preference
 import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
+import workshop.akbolatss.tools.barrier.utils.NotificationExt.createNotificationChannel
 import workshop.akbolatss.tools.barrier.utils.NotificationExt.disableNotification
 import workshop.akbolatss.tools.barrier.utils.NotificationExt.enableNotification
 import workshop.akbolatss.tools.barrier.utils.NotificationKeys
 
 class NotificationPreferences(
-        private val context: Context,
-        private val sharedPreferences: SharedPreferences
+    private val context: Context,
+    private val sharedPreferences: SharedPreferences
 ) {
 
     companion object {
@@ -41,9 +42,10 @@ class NotificationPreferences(
     }
 
     fun toggle(enable: Boolean): Boolean {
-        if (enable)
+        if (enable) {
+            context.createNotificationChannel()
             context.enableNotification()
-        else
+        } else
             context.disableNotification()
 
         sharedPreferences.edit().apply {

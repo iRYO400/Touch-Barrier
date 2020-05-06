@@ -14,31 +14,43 @@ class SettingsViewModel(
 ) : BaseViewModel() {
 
     val isBarrierEnabled = MutableLiveData<Boolean>()
-    val accessibleServiceDisabled = MutableLiveData<Event<Boolean>>()
+    val toggleBarrierError = MutableLiveData<Event<Boolean>>()
     val isNotificationPanelEnabled = MutableLiveData<Boolean>()
+
+    val isAccessibilityServiceEnabled = MutableLiveData<Boolean>()
 
     val isCloseOnActivationEnabled = MutableLiveData<Boolean>()
 
     init {
-        getBarrierState()
+//        getBarrierState()
         getNotificationState()
+        getAccessibilityServiceState()
         getCloseOnActivationState()
     }
 
-    private fun getBarrierState() {
-        executeUseCase { scope ->
-            interactors.getBarrierState(scope, GetBarrierState.Params())
-                .onSuccess {
-                    isBarrierEnabled.value = it
-                }
-        }
-    }
+//    private fun getBarrierState() {
+//        executeUseCase { scope ->
+//            interactors.getBarrierState(scope, GetBarrierState.Params())
+//                .onSuccess {
+//                    isBarrierEnabled.value = it
+//                }
+//        }
+//    }
 
     private fun getNotificationState() {
         executeUseCase { scope ->
             interactors.getNotificationPanelState(scope, GetNotificationPanelState.Params())
                 .onSuccess {
                     isNotificationPanelEnabled.value = it
+                }
+        }
+    }
+
+    private fun getAccessibilityServiceState() {
+        executeUseCase { scope ->
+            interactors.getAccessibilityServiceState(scope, GetAccessibilityServiceState.Params())
+                .onSuccess {
+                    isAccessibilityServiceEnabled.value = it
                 }
         }
     }
@@ -69,7 +81,7 @@ class SettingsViewModel(
                 }
                 .onFailure {
                     if (it is Failure.AccessibleServiceDisabled)
-                        accessibleServiceDisabled.value = Event(true)
+                        toggleBarrierError.value = Event(true)
 
                     isBarrierEnabled.value = false
                 }
@@ -82,6 +94,17 @@ class SettingsViewModel(
                 .onSuccess {
                     isCloseOnActivationEnabled.value = it
                 }
+        }
+    }
+
+    fun toggleAccessibilityService(isEnabled: Boolean) {
+        executeUseCase { scope ->
+            interactors.toggleAccessibilityService(
+                scope,
+                ToggleAccessibilityService.Params(isEnabled)
+            ).onSuccess {
+                isAccessibilityServiceEnabled.value = it
+            }
         }
     }
 

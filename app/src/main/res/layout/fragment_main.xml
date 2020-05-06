@@ -158,18 +158,11 @@
                     </LinearLayout>
 
                     <Switch
-                        android:id="@+id/switchPermDrawOver"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:paddingVertical="8dp"
-                        android:text="@string/options_permissions_draw_over_others" />
-
-                    <Switch
                         android:id="@+id/switchPermAccessibility"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:checked="@{viewModel.isAccessibilityServiceEnabled}"
                         android:paddingVertical="8dp"
                         android:text="@string/options_permissions_accessibility_service" />
 

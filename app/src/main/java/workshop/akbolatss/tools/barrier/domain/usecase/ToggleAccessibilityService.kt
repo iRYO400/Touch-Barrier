@@ -4,19 +4,14 @@ import kotlinx.coroutines.CoroutineScope
 import workshop.akbolatss.tools.barrier.base.BaseUseCase
 import workshop.akbolatss.tools.barrier.base.resources.Either
 import workshop.akbolatss.tools.barrier.base.resources.Failure
-import workshop.akbolatss.tools.barrier.preference.BarrierPreferences
 import workshop.akbolatss.tools.barrier.preference.PermissionPreferences
 
-class ToggleBarrier(
-    private val permissionPreferences: PermissionPreferences,
-    private val barrierPreferences: BarrierPreferences
-) : BaseUseCase<ToggleBarrier.Params, Boolean>() {
+class ToggleAccessibilityService(
+    private val permissionPreferences: PermissionPreferences
+) : BaseUseCase<ToggleAccessibilityService.Params, Boolean>() {
 
     override suspend fun run(params: Params, scope: CoroutineScope): Either<Failure, Boolean> {
-        return if (permissionPreferences.isAccessibleServiceEnabled()) {
-            Either.Right(barrierPreferences.toggle(params.enable))
-        } else
-            Either.Left(Failure.AccessibleServiceDisabled)
+        return Either.Right(permissionPreferences.toggleAccessibility(params.enable))
     }
 
     data class Params(val enable: Boolean)

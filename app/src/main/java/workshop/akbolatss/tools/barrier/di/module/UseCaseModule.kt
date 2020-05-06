@@ -7,12 +7,14 @@ import workshop.akbolatss.tools.barrier.ui.SettingsInteractors
 val useCaseModule = module {
     factory {
         SettingsInteractors(
-            getBarrierState = GetBarrierState(get()),
-            toggleBarrier = ToggleBarrier(get()),
+            getBarrierState = GetBarrierState(),
+            toggleBarrier = ToggleBarrier(get(), get()),
             getNotificationPanelState = GetNotificationPanelState(get()),
             toggleNotificationPanel = ToggleNotificationPanel(get()),
             getCloseOnActivationState = GetCloseOnActivationState(get()),
-            toggleCloseOnActivation = ToggleCloseOnActivation(get())
+            toggleCloseOnActivation = ToggleCloseOnActivation(get()),
+            getAccessibilityServiceState = GetAccessibilityServiceState(get()),
+            toggleAccessibilityService = ToggleAccessibilityService(get())
         )
     }
 }
