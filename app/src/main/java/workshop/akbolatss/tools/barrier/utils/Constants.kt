@@ -31,13 +31,11 @@ interface HawkKeys {
         const val IS_FIRST_START = "ShowTutorialFragment"
 
         const val CLOSE_ON_ACTIVATION = "ShouldCloseOnActivation"
-        const val CLOSE_ON_UNLOCK = "ShouldCloseOnUnlock"
 
         const val LOCK_TYPE_INDEX = "LockTypeIndex"
 
         const val NOTIFY_CHANNEL_CREATED = "isNotifyChannelCreated"
 
         const val PATTERN_DOTS = "patternDots"
-        const val PIN_CODE = "pinCode"
     }
 }

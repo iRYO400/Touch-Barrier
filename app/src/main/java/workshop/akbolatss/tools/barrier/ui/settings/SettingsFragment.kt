@@ -71,12 +71,6 @@ class SettingsFragment(
         else
             Hawk.put(HawkKeys.CLOSE_ON_ACTIVATION, false)
 
-
-        if (Hawk.contains(HawkKeys.CLOSE_ON_UNLOCK))
-            binding.switchCloseOnUnlock.isChecked = Hawk.get(HawkKeys.CLOSE_ON_UNLOCK)
-        else
-            Hawk.put(HawkKeys.CLOSE_ON_UNLOCK, true)
-
         if (!Hawk.contains(HawkKeys.NOTIFY_CHANNEL_CREATED)) {
             Hawk.put(HawkKeys.NOTIFY_CHANNEL_CREATED, true)
             createDefaultNotificationChannel(activity!!)
@@ -123,13 +117,6 @@ class SettingsFragment(
             Hawk.put(HawkKeys.CLOSE_ON_ACTIVATION, isChecked)
         }
 
-        binding.switchCloseOnUnlock.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (!buttonView!!.isPressed)
-                return@setOnCheckedChangeListener
-
-            Hawk.put(HawkKeys.CLOSE_ON_UNLOCK, isChecked)
-        }
-
         binding.switchPermDrawOver.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
@@ -144,7 +131,7 @@ class SettingsFragment(
                 openDrawOverSettings()
         }
 
-        binding.switchPermAccessibil.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchPermAccessibility.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
@@ -157,7 +144,7 @@ class SettingsFragment(
                     ActionType.OPEN_ACCESSIBILITY_SETTINGS,
                     getString(R.string.try_deny_permission)
                 )
-                binding.switchPermAccessibil.isChecked = !isChecked
+                binding.switchPermAccessibility.isChecked = !isChecked
             } else
                 openAccessibilitySettings()
         }
@@ -199,7 +186,7 @@ class SettingsFragment(
         else
             binding.switchPermDrawOver.visibility = View.GONE
 
-        binding.switchPermAccessibil.isChecked =
+        binding.switchPermAccessibility.isChecked =
             isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)
     }
 
