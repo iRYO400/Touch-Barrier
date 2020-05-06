@@ -20,7 +20,7 @@
 
         <!-- Activities -->
 
-        <activity android:name="workshop.akbolatss.tools.barrier.ui.SettingsActivity">
+        <activity android:name="workshop.akbolatss.tools.barrier.ui.RootActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

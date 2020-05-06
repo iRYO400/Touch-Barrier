@@ -9,21 +9,19 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.orhanobut.hawk.Hawk
-import kotlinx.android.synthetic.main.settings_fragment.*
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 import workshop.akbolatss.tools.barrier.BarrierApplication
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.accessibility.AccessibilityServiceHelper.isAccessibilityServiceEnabled
 import workshop.akbolatss.tools.barrier.accessibility.BarrierAccessibilityService
-import workshop.akbolatss.tools.barrier.ui.SettingsActivity
+import workshop.akbolatss.tools.barrier.base.BaseFragment
+import workshop.akbolatss.tools.barrier.databinding.FragmentMainBinding
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.ActionType
 import workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockListActivity
 import workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockType
@@ -32,12 +30,12 @@ import workshop.akbolatss.tools.barrier.utils.IntentKeys
 import workshop.akbolatss.tools.barrier.utils.IntentKeys.Companion.INTENT_FILTER_ACCESSIBILITY
 import workshop.akbolatss.tools.barrier.utils.IntentKeys.Companion.INTENT_TOGGLE_BARRIER
 import workshop.akbolatss.tools.barrier.utils.NotificationExt.createDefaultNotificationChannel
-import workshop.akbolatss.tools.barrier.utils.NotificationExt.disableNotification
-import workshop.akbolatss.tools.barrier.utils.NotificationExt.enableNotification
 import workshop.akbolatss.tools.barrier.utils.NotificationKeys.Companion.NOTIFICATION_ID
 import workshop.akbolatss.tools.barrier.utils.showSnackbarError
 
-class SettingsFragment : Fragment() {
+class SettingsFragment(
+    override val layoutId: Int = R.layout.fragment_main
+) : BaseFragment<FragmentMainBinding>() {
 
     companion object {
         fun newInstance() = SettingsFragment()
@@ -45,28 +43,58 @@ class SettingsFragment : Fragment() {
         private const val REQUEST_SET_LOCK = 102
     }
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by lifecycleScope.viewModel<SettingsViewModel>(this)
 
     private lateinit var callback: SettingsFragmentCallback
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = (context as SettingsActivity)
+        if (context is SettingsFragmentCallback)
+            callback = context
+        else
+            throw IllegalStateException("Caller must implement ${SettingsFragmentCallback::class.java.simpleName}")
     }
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.settings_fragment, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-
+    override fun init(savedInstanceState: Bundle?) {
+        super.init(savedInstanceState)
+        binding.viewModel = viewModel
         setDefault()
-        setListeners()
+    }
+
+    /**
+     * Init default values
+     */
+    private fun setDefault() {
+        if (Hawk.contains(HawkKeys.LOCK_TYPE_INDEX)) {
+            val type = Hawk.get(HawkKeys.LOCK_TYPE_INDEX, ScreenLockType.NONE)
+            binding.selectedLock.text = getString(type.getName())
+        } else {
+            Hawk.put(HawkKeys.LOCK_TYPE_INDEX, ScreenLockType.NONE)
+        }
+
+        if (Hawk.contains(HawkKeys.CLOSE_ON_ACTIVATION))
+            binding.switchCloseOnActivation.isChecked = Hawk.get(HawkKeys.CLOSE_ON_ACTIVATION)
+        else
+            Hawk.put(HawkKeys.CLOSE_ON_ACTIVATION, false)
+
+
+        if (Hawk.contains(HawkKeys.CLOSE_ON_UNLOCK))
+            binding.switchCloseOnUnlock.isChecked = Hawk.get(HawkKeys.CLOSE_ON_UNLOCK)
+        else
+            Hawk.put(HawkKeys.CLOSE_ON_UNLOCK, true)
+
+        if (!Hawk.contains(HawkKeys.NOTIFY_CHANNEL_CREATED)) {
+            Hawk.put(HawkKeys.NOTIFY_CHANNEL_CREATED, true)
+            createDefaultNotificationChannel(activity!!)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            binding.switchNotifyBar.isChecked = isNotificationActive()
+    }
+
+    override fun setObserversListeners() {
         setObservers()
+        setListeners()
     }
 
     /**
@@ -78,40 +106,10 @@ class SettingsFragment : Fragment() {
             if (barrierState == null)
                 barrierState = false
 
-            switch_barrier.isChecked = barrierState
+            binding.switchBarrier.isChecked = barrierState
         })
     }
 
-    /**
-     * Init default values
-     */
-    private fun setDefault() {
-        if (Hawk.contains(HawkKeys.LOCK_TYPE_INDEX)) {
-            val type = Hawk.get(HawkKeys.LOCK_TYPE_INDEX, ScreenLockType.NONE)
-            selected_lock.text = getString(type.getName())
-        } else {
-            Hawk.put(HawkKeys.LOCK_TYPE_INDEX, ScreenLockType.NONE)
-        }
-
-        if (Hawk.contains(HawkKeys.CLOSE_ON_ACTIVATION))
-            switch_close_on_activation.isChecked = Hawk.get(HawkKeys.CLOSE_ON_ACTIVATION)
-        else
-            Hawk.put(HawkKeys.CLOSE_ON_ACTIVATION, false)
-
-
-        if (Hawk.contains(HawkKeys.CLOSE_ON_UNLOCK))
-            switch_close_on_unlock.isChecked = Hawk.get(HawkKeys.CLOSE_ON_UNLOCK)
-        else
-            Hawk.put(HawkKeys.CLOSE_ON_UNLOCK, true)
-
-        if (!Hawk.contains(HawkKeys.NOTIFY_CHANNEL_CREATED)) {
-            Hawk.put(HawkKeys.NOTIFY_CHANNEL_CREATED, true)
-            createDefaultNotificationChannel(activity!!)
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            switch_notify_bar.isChecked = isNotificationActive()
-    }
 
     @TargetApi(Build.VERSION_CODES.M)
     private fun isNotificationActive(): Boolean {
@@ -127,7 +125,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setListeners() {
-        switch_barrier.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchBarrier.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
@@ -137,54 +135,64 @@ class SettingsFragment : Fragment() {
                 disableBarrier()
         }
 
-        switch_notify_bar.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchNotifyBar.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
-            if (isChecked)
-                showNotificationPanel()
-            else
-                hideNotificationPanel()
+            viewModel.toggleNotificationPanel(isChecked)
         }
 
-        switch_close_on_activation.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchCloseOnActivation.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
             Hawk.put(HawkKeys.CLOSE_ON_ACTIVATION, isChecked)
         }
 
-        switch_close_on_unlock.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchCloseOnUnlock.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
             Hawk.put(HawkKeys.CLOSE_ON_UNLOCK, isChecked)
         }
 
-        switch_perm_draw_over.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchPermDrawOver.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
             if (!isChecked && BarrierApplication.instance.canDrawOverApps()) {
-                callback.showSnackbar(ActionType.OPEN_DRAW_OVER_SETTINGS, getString(R.string.try_deny_permission))
-                switch_perm_draw_over.isChecked = !isChecked
+                callback.showSnackbar(
+                    ActionType.OPEN_DRAW_OVER_SETTINGS,
+                    getString(R.string.try_deny_permission)
+                )
+                binding.switchPermDrawOver.isChecked = !isChecked
             } else
                 openDrawOverSettings()
         }
 
-        switch_perm_accessibil.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchPermAccessibil.setOnCheckedChangeListener { buttonView, isChecked ->
             if (!buttonView!!.isPressed)
                 return@setOnCheckedChangeListener
 
-            if (!isChecked && isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)) {
-                callback.showSnackbar(ActionType.OPEN_ACCESSIBILITY_SETTINGS, getString(R.string.try_deny_permission))
-                switch_perm_accessibil.isChecked = !isChecked
+            if (!isChecked && isAccessibilityServiceEnabled(
+                    activity,
+                    BarrierAccessibilityService::class.java
+                )
+            ) {
+                callback.showSnackbar(
+                    ActionType.OPEN_ACCESSIBILITY_SETTINGS,
+                    getString(R.string.try_deny_permission)
+                )
+                binding.switchPermAccessibil.isChecked = !isChecked
             } else
                 openAccessibilitySettings()
         }
 
-        screen_lock.setOnClickListener {
-            val intent = Intent(activity, ScreenLockListActivity::class.java) //TODO: There is hidden old lock settings
+        binding.screenLock.setOnClickListener {
+            val intent = Intent(
+                activity,
+                ScreenLockListActivity::class.java
+            ) //TODO: There is hidden old lock settings
             startActivityForResult(intent, REQUEST_SET_LOCK)
         }
     }
@@ -197,23 +205,12 @@ class SettingsFragment : Fragment() {
 
     @Deprecated("It's not needed")
     private fun openDrawOverSettings() {
-        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:${activity!!.packageName}"))
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${activity!!.packageName}")
+        )
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY)
         startActivity(intent)
-    }
-
-    private fun showNotificationPanel() {
-        enableNotification(activity!!)
-    }
-
-    private fun hideNotificationPanel() {
-        disableNotification(activity!!)
-    }
-
-    private fun clearPreviousLockProperties() {
-        Hawk.delete(HawkKeys.PATTERN_DOTS)
-        Hawk.delete(HawkKeys.PIN_CODE)
     }
 
     private fun enableBarrier() {
@@ -224,9 +221,9 @@ class SettingsFragment : Fragment() {
             val intent = Intent(INTENT_FILTER_ACCESSIBILITY)
             intent.putExtra(INTENT_TOGGLE_BARRIER, true)
             LocalBroadcastManager.getInstance(activity!!)
-                    .sendBroadcast(intent)
+                .sendBroadcast(intent)
 
-            if (switch_close_on_activation.isChecked)
+            if (binding.switchCloseOnActivation.isChecked)
                 activity!!.finish()
         }
     }
@@ -235,14 +232,14 @@ class SettingsFragment : Fragment() {
         val intent = Intent(INTENT_FILTER_ACCESSIBILITY)
         intent.putExtra(INTENT_TOGGLE_BARRIER, false)
         LocalBroadcastManager.getInstance(activity!!)
-                .sendBroadcast(intent)
+            .sendBroadcast(intent)
     }
 
     private fun showPermissionSettings() {
-        switch_barrier.isChecked = false
+        binding.switchBarrier.isChecked = false
         callback.scrollView()
         val animationShake = AnimationUtils.loadAnimation(activity!!, R.anim.anim_shake)
-        perm_info.startAnimation(animationShake)
+        binding.permInfo.startAnimation(animationShake)
     }
 
     override fun onResume() {
@@ -252,20 +249,22 @@ class SettingsFragment : Fragment() {
 
     private fun checkPermissions() {
         if (Build.VERSION.SDK_INT >= 23)
-            switch_perm_draw_over.isChecked = BarrierApplication.instance.canDrawOverApps()
+            binding.switchPermDrawOver.isChecked = BarrierApplication.instance.canDrawOverApps()
         else
-            switch_perm_draw_over.visibility = View.GONE
+            binding.switchPermDrawOver.visibility = View.GONE
 
-        switch_perm_accessibil.isChecked = isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)
+        binding.switchPermAccessibil.isChecked =
+            isAccessibilityServiceEnabled(activity, BarrierAccessibilityService::class.java)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_SET_LOCK) {
             if (resultCode == Activity.RESULT_OK) {
-                val screenLockType: ScreenLockType = data!!.getSerializableExtra(IntentKeys.SCREEN_LOCK_TYPE) as ScreenLockType
-                selected_lock.text = getString(screenLockType.getName())
+                val screenLockType: ScreenLockType =
+                    data!!.getSerializableExtra(IntentKeys.SCREEN_LOCK_TYPE) as ScreenLockType
+                binding.selectedLock.text = getString(screenLockType.getName())
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                showSnackbarError(coordinator, getString(R.string.error_did_not_set_lock))
+                showSnackbarError(binding.coordinator, getString(R.string.error_did_not_set_lock))
             }
         }
     }

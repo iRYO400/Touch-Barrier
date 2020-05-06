@@ -17,7 +17,7 @@ import workshop.akbolatss.tools.barrier.BarrierApplication
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.accessibility.AccessibilityServiceHelper.isAccessibilityServiceEnabled
 import workshop.akbolatss.tools.barrier.accessibility.BarrierAccessibilityService
-import workshop.akbolatss.tools.barrier.ui.SettingsActivity
+import workshop.akbolatss.tools.barrier.ui.RootActivity
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.ActionType
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.IntroAction
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.IntroAdapter
@@ -36,7 +36,7 @@ class IntroFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = (context as SettingsActivity)
+        callback = (context as RootActivity)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -9,7 +9,7 @@ import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.orhanobut.hawk.Hawk
-import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.activity_root.*
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.ui.intro.IntroFragmentCallback
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.ActionType
@@ -19,13 +19,13 @@ import workshop.akbolatss.tools.barrier.ui.settings.SettingsFragmentCallback
 import workshop.akbolatss.tools.barrier.utils.HawkKeys.Companion.IS_FIRST_START
 import workshop.akbolatss.tools.barrier.utils.showSnackbarAction
 
-class SettingsActivity : AppCompatActivity(), IntroFragmentCallback, SettingsFragmentCallback {
+class RootActivity : AppCompatActivity(), IntroFragmentCallback, SettingsFragmentCallback {
 
     private var currentTabTag: MutableLiveData<String> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        setContentView(R.layout.activity_root)
 
         if (Hawk.get(IS_FIRST_START, true))
             navigateToTab(NavigationTab.TUTORIAL)
@@ -80,6 +80,7 @@ class SettingsActivity : AppCompatActivity(), IntroFragmentCallback, SettingsFra
                         startActivity(goToSettings)
                     }
                 }
+                else -> Unit
             }
         }
     }
