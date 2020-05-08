@@ -6,7 +6,6 @@ import workshop.akbolatss.tools.barrier.base.resources.Failure
 import workshop.akbolatss.tools.barrier.base.resources.onFailure
 import workshop.akbolatss.tools.barrier.base.resources.onSuccess
 import workshop.akbolatss.tools.barrier.domain.usecase.*
-import workshop.akbolatss.tools.barrier.ui.SettingsInteractors
 import workshop.akbolatss.tools.barrier.utils.livedata.Event
 
 class SettingsViewModel(
@@ -54,15 +53,6 @@ class SettingsViewModel(
         }
     }
 
-    fun toggleNotificationPanel(isEnabled: Boolean) {
-        executeUseCase { scope ->
-            interactors.toggleNotificationPanel(scope, ToggleNotificationPanel.Params(isEnabled))
-                .onSuccess {
-                    isNotificationPanelEnabled.value = it
-                }
-        }
-    }
-
     fun toggleBarrier(isEnabled: Boolean) {
         executeUseCase { scope ->
             interactors.toggleBarrier(scope, ToggleBarrier.Params(isEnabled))
@@ -74,6 +64,15 @@ class SettingsViewModel(
                         toggleBarrierError.value = Event(true)
 
                     isBarrierEnabled.value = false
+                }
+        }
+    }
+
+    fun toggleNotificationPanel(isEnabled: Boolean) {
+        executeUseCase { scope ->
+            interactors.toggleNotificationPanel(scope, ToggleNotificationPanel.Params(isEnabled))
+                .onSuccess {
+                    isNotificationPanelEnabled.value = it
                 }
         }
     }

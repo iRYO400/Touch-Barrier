@@ -13,17 +13,26 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.FrameLayout
 import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import workshop.akbolatss.tools.barrier.databinding.ViewBarrierHolderBinding
+import workshop.akbolatss.tools.barrier.preference.AdditionalPreferences
 import workshop.akbolatss.tools.barrier.utils.IntentKeys
 
 class BarrierAccessibilityService :
-    AccessibilityService() {
+    AccessibilityService(), KoinComponent {
 
     companion object {
         val isBarrierEnabled = MutableLiveData<Boolean>()
     }
 
     private var rootView: FrameLayout? = null
+
+    private val additionalPreferences by inject<AdditionalPreferences>()
+
+    private val shouldCloseOnActivation by lazy {
+        additionalPreferences.isCloseOnActivationEnabled()
+    }
 
     override fun onServiceConnected() {
         isBarrierEnabled.value = false
@@ -61,6 +70,7 @@ class BarrierAccessibilityService :
         val rootView = initRootView(layoutParams)
         val binding = inflateView(rootView)
         setListeners(binding)
+        applyPreferenceSettings()
         isBarrierEnabled.value = true
     }
 
@@ -90,6 +100,21 @@ class BarrierAccessibilityService :
         binding.imgLogo.setOnClickListener {
             disableBarrier()
         }
+    }
+
+    private fun applyPreferenceSettings() {
+        if (shouldCloseOnActivation)
+            goHomeActivity()
+    }
+
+    private fun goHomeActivity() {
+        val homeIntent = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_HOME)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        startActivity(homeIntent)
+        // close status bar
+        sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
     }
 
     private fun disableBarrier() {
