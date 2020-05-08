@@ -2,10 +2,7 @@ package workshop.akbolatss.tools.barrier.di.module
 
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
-import workshop.akbolatss.tools.barrier.preference.AdditionalPreferences
-import workshop.akbolatss.tools.barrier.preference.BarrierPreferences
-import workshop.akbolatss.tools.barrier.preference.NotificationPreferences
-import workshop.akbolatss.tools.barrier.preference.PermissionPreferences
+import workshop.akbolatss.tools.barrier.preference.*
 
 val preferenceModule = module {
     single {
@@ -30,6 +27,12 @@ val preferenceModule = module {
 
     single {
         PermissionPreferences(
+            context = androidContext()
+        )
+    }
+
+    single {
+        VfxPreferences(
             context = androidContext()
         )
     }

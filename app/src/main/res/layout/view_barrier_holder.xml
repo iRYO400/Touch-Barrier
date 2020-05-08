@@ -6,8 +6,14 @@
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent"
-        android:padding="8dp">
+        android:background="@color/transparent">
+
+        <View
+            android:id="@+id/viewEnterVfx"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true" />
 
         <ImageView
             android:id="@+id/imgLogo"

@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         tools:context=".ui.settings.SettingsFragment">
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -220,7 +220,9 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/frame_background"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:visibility="gone"
+                    tools:visibility="gone">
 
                     <TextView
                         android:id="@+id/tvAdditionalOptions"
@@ -302,7 +304,76 @@
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/frame_background"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Эффекты"
+                        android:textAppearance="@style/SingleLinePrimaryMediumText"
+                        android:textSize="16sp" />
+
+                    <LinearLayout
+                        android:id="@+id/btnEnterVFX"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="При запуске"
+                            android:textAppearance="@style/SingleLinePrimaryText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="Затемнение" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btnIdleVFX"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Во время"
+                            android:textAppearance="@style/SingleLinePrimaryText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="Сплошной цвет" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

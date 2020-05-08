@@ -119,6 +119,17 @@ class SettingsFragment(
             ) //TODO: There is hidden old lock settings
             startActivityForResult(intent, REQUEST_SET_LOCK)
         }
+
+        binding.btnEnterVFX.setOnClickListener {
+//            openSelectEnterVfx()
+        }
+        binding.btnIdleVFX.setOnClickListener {
+//            openSelectEnterVfx()
+        }
+    }
+
+    private fun openSelectEnterVfx() {
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

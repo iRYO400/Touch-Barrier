@@ -15,8 +15,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import timber.log.Timber
 import workshop.akbolatss.tools.barrier.databinding.ViewBarrierHolderBinding
 import workshop.akbolatss.tools.barrier.preference.AdditionalPreferences
+import workshop.akbolatss.tools.barrier.preference.VfxPreferences
 import workshop.akbolatss.tools.barrier.utils.IntentKeys
 
 class BarrierAccessibilityService :
@@ -32,6 +34,8 @@ class BarrierAccessibilityService :
 
     private val shouldCloseOnActivation: Boolean
         get() = additionalPreferences.isCloseOnActivationEnabled()
+
+    private val vfxPreferences by inject<VfxPreferences>()
 
     override fun onServiceConnected() {
         isBarrierEnabled.value = false
@@ -70,6 +74,7 @@ class BarrierAccessibilityService :
         val binding = inflateView(rootView)
         setListeners(binding)
         applyPreferenceSettings()
+        applyVfx(binding)
         isBarrierEnabled.value = true
     }
 
@@ -104,6 +109,16 @@ class BarrierAccessibilityService :
     private fun applyPreferenceSettings() {
         if (shouldCloseOnActivation)
             goHomeActivity()
+    }
+
+    private fun applyVfx(binding: ViewBarrierHolderBinding) {
+        val enterVfx = vfxPreferences.getEnterVfx(binding.viewEnterVfx)
+//        val idleVfx = vfxPreferences.getIdleVfx()
+        enterVfx.apply(onStart = {
+            Timber.d("onStart")
+        }, onEnd = {
+            Timber.d("onEnd")
+        })
     }
 
     private fun goHomeActivity() {
