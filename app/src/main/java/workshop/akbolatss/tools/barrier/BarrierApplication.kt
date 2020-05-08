@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import com.orhanobut.hawk.Hawk
 import workshop.akbolatss.tools.barrier.di.KoinInjector
+import workshop.akbolatss.tools.barrier.utils.logging.TimberLogImplementation
 
 class BarrierApplication : Application() {
 
@@ -13,6 +14,7 @@ class BarrierApplication : Application() {
         super.onCreate()
         KoinInjector.init(this)
         instance = this
+        TimberLogImplementation.init()
         Hawk.init(applicationContext).build()
     }
 

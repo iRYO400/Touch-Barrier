@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AnimationUtils
+import androidx.lifecycle.Observer
 import com.orhanobut.hawk.Hawk
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 import workshop.akbolatss.tools.barrier.R
+import workshop.akbolatss.tools.barrier.accessibility.BarrierAccessibilityService
 import workshop.akbolatss.tools.barrier.base.BaseFragment
 import workshop.akbolatss.tools.barrier.databinding.FragmentMainBinding
 import workshop.akbolatss.tools.barrier.ui.lock_screen.ScreenLockListActivity
@@ -67,6 +69,11 @@ class SettingsFragment(
         viewModel.toggleBarrierError.observe(viewLifecycleOwner, EventObserver {
             if (it)
                 showPermissionSettings()
+        })
+        BarrierAccessibilityService.isBarrierEnabled.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                binding.switchBarrier.isChecked = it
+            }
         })
     }
 

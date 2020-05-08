@@ -22,20 +22,10 @@ class SettingsViewModel(
     val isCloseOnActivationEnabled = MutableLiveData<Boolean>()
 
     init {
-//        getBarrierState()
         getNotificationState()
         getAccessibilityServiceState()
         getCloseOnActivationState()
     }
-
-//    private fun getBarrierState() {
-//        executeUseCase { scope ->
-//            interactors.getBarrierState(scope, GetBarrierState.Params())
-//                .onSuccess {
-//                    isBarrierEnabled.value = it
-//                }
-//        }
-//    }
 
     private fun getNotificationState() {
         executeUseCase { scope ->
