@@ -30,9 +30,8 @@ class BarrierAccessibilityService :
 
     private val additionalPreferences by inject<AdditionalPreferences>()
 
-    private val shouldCloseOnActivation by lazy {
-        additionalPreferences.isCloseOnActivationEnabled()
-    }
+    private val shouldCloseOnActivation: Boolean
+        get() = additionalPreferences.isCloseOnActivationEnabled()
 
     override fun onServiceConnected() {
         isBarrierEnabled.value = false
