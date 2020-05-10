@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
@@ -82,8 +83,7 @@ class BarrierAccessibilityService :
         return WindowManager.LayoutParams()
             .apply {
                 type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
-                flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN
+                flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
                 format = PixelFormat.TRANSLUCENT
             }
     }
@@ -109,6 +109,8 @@ class BarrierAccessibilityService :
     private fun applyPreferenceSettings() {
         if (shouldCloseOnActivation)
             goHomeActivity()
+
+        toggleImmersive(true)
     }
 
     private fun applyVfx(binding: ViewBarrierHolderBinding) {
@@ -132,8 +134,26 @@ class BarrierAccessibilityService :
     }
 
     private fun disableBarrier() {
+        toggleImmersive(false)
         removeRootView()
         isBarrierEnabled.value = false
+    }
+
+    private fun toggleImmersive(isEnable: Boolean) {
+        rootView?.let {
+            var uiVisibility = it.systemUiVisibility
+
+            if (isEnable) {
+                uiVisibility = uiVisibility or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                uiVisibility = uiVisibility or View.SYSTEM_UI_FLAG_FULLSCREEN
+                uiVisibility = uiVisibility or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            } else {
+                uiVisibility = uiVisibility xor View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                uiVisibility = uiVisibility xor View.SYSTEM_UI_FLAG_FULLSCREEN
+                uiVisibility = uiVisibility xor View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            }
+            it.systemUiVisibility = uiVisibility
+        }
     }
 
     private fun removeRootView() {

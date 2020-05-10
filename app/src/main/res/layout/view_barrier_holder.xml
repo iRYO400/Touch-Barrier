@@ -5,17 +5,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent">
+        android:layout_height="match_parent">
 
-        <View
+        <FrameLayout
             android:id="@+id/viewEnterVfx"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
             android:focusable="true" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgLogo"
             android:layout_width="192dp"
             android:layout_height="192dp"
