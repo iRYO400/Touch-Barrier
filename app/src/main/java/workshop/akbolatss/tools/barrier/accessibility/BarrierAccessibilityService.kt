@@ -114,9 +114,10 @@ class BarrierAccessibilityService :
     }
 
     private fun applyVfx(binding: ViewBarrierHolderBinding) {
-        val enterVfx = vfxPreferences.getEnterVfx(binding.viewEnterVfx)
-//        val idleVfx = vfxPreferences.getIdleVfx()
-        enterVfx.apply(onStart = {
+        val enterVfx = vfxPreferences.getEnterVfx()
+        val enterVfxAction = enterVfx.getAction()
+        enterVfxAction.prepare(binding.viewEnterVfx)
+        enterVfxAction.apply(onStart = {
             Timber.d("onStart")
         }, onEnd = {
             Timber.d("onEnd")

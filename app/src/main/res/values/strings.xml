@@ -62,5 +62,13 @@
     <string name="password">Password</string>
     <string name="password_desc">Standart text password</string>
     <string name="screen_lock_default">Configure</string>
+    <string name="enter_vfx_color_transition_desc">Color Transition Desc</string>
+    <string name="enter_vfx_color_transition_name">Color Transition</string>
+    <string name="enter_vfx_fade_name">Fade</string>
+    <string name="enter_vfx_fade_desc">Fade to selected color</string>
+    <string name="enter_vfx_tv_off_name">TvOff</string>
+    <string name="enter_vfx_tv_off_desc">Old Tv off</string>
+    <string name="enter_vfx_transparent_name">Transparent</string>
+    <string name="enter_vfx_transparent_desc">Just nothing</string>
 
 </resources>

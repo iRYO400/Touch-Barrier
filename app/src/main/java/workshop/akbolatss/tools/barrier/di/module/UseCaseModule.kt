@@ -2,6 +2,7 @@ package workshop.akbolatss.tools.barrier.di.module
 
 import org.koin.dsl.module
 import workshop.akbolatss.tools.barrier.domain.usecase.*
+import workshop.akbolatss.tools.barrier.ui.effects.enter.EnterVfxInteractors
 import workshop.akbolatss.tools.barrier.ui.settings.SettingsInteractors
 
 val useCaseModule = module {
@@ -14,6 +15,13 @@ val useCaseModule = module {
             toggleCloseOnActivation = ToggleCloseOnActivation(get()),
             getAccessibilityServiceState = GetAccessibilityServiceState(get()),
             toggleAccessibilityService = ToggleAccessibilityService(get())
+        )
+    }
+    factory {
+        EnterVfxInteractors(
+            getEnterVfxList = GetEnterVfxList(get()),
+            getSelectedEnterVfx = GetSelectedEnterVfx(get()),
+            selectEnterVfx = SelectEnterVfx(get())
         )
     }
 }

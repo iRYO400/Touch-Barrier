@@ -33,7 +33,8 @@ val preferenceModule = module {
 
     single {
         VfxPreferences(
-            context = androidContext()
+            context = androidContext(),
+            sharedPreferences = get()
         )
     }
 }

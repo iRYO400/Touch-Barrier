@@ -25,7 +25,7 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment(), KoinComponent {
         return binding.root
     }
 
-    fun init(inflater: LayoutInflater, container: ViewGroup?) {
+    private fun init(inflater: LayoutInflater, container: ViewGroup?) {
         binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
     }

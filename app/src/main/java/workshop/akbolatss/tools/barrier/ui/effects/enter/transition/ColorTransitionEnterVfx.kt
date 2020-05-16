@@ -1,50 +1,16 @@
 package workshop.akbolatss.tools.barrier.ui.effects.enter.transition
 
-import android.animation.Animator
-import android.animation.ValueAnimator
-import android.content.Context
-import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.core.content.ContextCompat
 import workshop.akbolatss.tools.barrier.R
-import workshop.akbolatss.tools.barrier.ui.effects.enter.EnterVfxApi
+import workshop.akbolatss.tools.barrier.ui.effects.enter.IEnterVfx
+import workshop.akbolatss.tools.barrier.ui.effects.enter.IEnterVfxAction
 
-class ColorTransitionEnterVfx(
-    context: Context,
-    private val targetView: View
-) : EnterVfxApi {
+data class ColorTransitionEnterVfx(
+    override val id: Int = 1,
+    override val nameRes: Int = R.string.enter_vfx_color_transition_name,
+    override val descriptionRes: Int = R.string.enter_vfx_color_transition_desc
+) : IEnterVfx {
 
-    private val argbAnimator = ValueAnimator.ofArgb(
-        ContextCompat.getColor(context, R.color.transparent),
-        ContextCompat.getColor(context, R.color.black)
-    ).apply {
-        interpolator = AccelerateDecelerateInterpolator()
-        duration = 1500
+    override fun getAction(): IEnterVfxAction {
+        return ColorTransitionEnterVfxAction()
     }
-
-    init {
-        argbAnimator.addUpdateListener {
-            val color = it?.animatedValue as? Int
-            color?.let {
-                targetView.setBackgroundColor(color)
-            }
-        }
-    }
-
-    override fun apply(onStart: () -> Unit, onEnd: () -> Unit) {
-        argbAnimator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationCancel(animation: Animator?) = Unit
-            override fun onAnimationRepeat(animation: Animator?) = Unit
-
-            override fun onAnimationEnd(animation: Animator?) {
-                onEnd.invoke()
-            }
-
-            override fun onAnimationStart(animation: Animator?) {
-                onStart.invoke()
-            }
-        })
-        argbAnimator.start()
-    }
-
 }
