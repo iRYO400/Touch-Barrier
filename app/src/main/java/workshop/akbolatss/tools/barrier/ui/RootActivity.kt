@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.orhanobut.hawk.Hawk
 import kotlinx.android.synthetic.main.activity_root.*
@@ -19,7 +20,7 @@ import workshop.akbolatss.tools.barrier.ui.settings.SettingsFragmentCallback
 import workshop.akbolatss.tools.barrier.utils.HawkKeys.Companion.IS_FIRST_START
 import workshop.akbolatss.tools.barrier.utils.showSnackbarAction
 
-class RootActivity : AppCompatActivity(), IntroFragmentCallback, SettingsFragmentCallback {
+class RootActivity : FragmentActivity(), IntroFragmentCallback, SettingsFragmentCallback {
 
     private var currentTabTag: MutableLiveData<String> = MutableLiveData()
 
