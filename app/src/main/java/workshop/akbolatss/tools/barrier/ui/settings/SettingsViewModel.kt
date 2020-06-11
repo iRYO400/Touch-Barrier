@@ -97,4 +97,10 @@ class SettingsViewModel(
         }
     }
 
+    fun openEnterVfxSelector() {
+        executeUseCase { scope ->
+            interactors.openEnterVfxSelector(scope, OpenEnterVfxSelector.Params())
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
+import timber.log.Timber
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.base.BaseFragment
 import workshop.akbolatss.tools.barrier.databinding.FragmentEnterVfxListBinding
@@ -18,6 +19,7 @@ class EnterVfxSelectFragment(
 
     override fun init(savedInstanceState: Bundle?) {
         super.init(savedInstanceState)
+        Timber.d("init EnterVfxFragment")
         initRv()
     }
 
@@ -37,6 +39,11 @@ class EnterVfxSelectFragment(
     }
 
     override fun setObserversListeners() {
+        observeViewModel()
+        setListeners()
+    }
+
+    private fun observeViewModel() {
         viewModel.enterVfxList.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
@@ -44,6 +51,12 @@ class EnterVfxSelectFragment(
             adapter.selectedItemId = it.id
             adapter.notifyItemRangeChanged(0, adapter.itemCount, EnterVfxRVA.SELECTED_ITEM_ID)
         })
+    }
+
+    private fun setListeners() {
+        binding.btnBack.setOnClickListener {
+            viewModel.openSettings()
+        }
     }
 
 }

@@ -10,7 +10,7 @@ import workshop.akbolatss.tools.barrier.ui.settings.SettingsFragment
 import workshop.akbolatss.tools.barrier.ui.settings.SettingsViewModel
 
 val viewModelModule: Module = module {
-    scope(named<SettingsFragment>()) {
+    scope<SettingsFragment> {
         viewModel {
             SettingsViewModel(get())
         }

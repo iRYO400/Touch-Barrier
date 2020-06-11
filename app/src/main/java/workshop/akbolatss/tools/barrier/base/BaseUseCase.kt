@@ -18,6 +18,7 @@ abstract class BaseUseCase<in Params, out Type> where Type : Any {
             try {
                 run(params, this)
             } catch (e: Exception) {
+                e.printStackTrace()
                 Either.Left(Failure.UseCaseError)
             }
         }

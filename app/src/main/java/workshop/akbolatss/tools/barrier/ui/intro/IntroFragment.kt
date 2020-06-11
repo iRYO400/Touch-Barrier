@@ -1,6 +1,5 @@
 package workshop.akbolatss.tools.barrier.ui.intro
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -17,7 +16,6 @@ import workshop.akbolatss.tools.barrier.BarrierApplication
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.accessibility.AccessibilityServiceHelper.isAccessibilityServiceEnabled
 import workshop.akbolatss.tools.barrier.accessibility.BarrierAccessibilityService
-import workshop.akbolatss.tools.barrier.ui.RootActivity
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.ActionType
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.IntroAction
 import workshop.akbolatss.tools.barrier.ui.intro.adapter.IntroAdapter
@@ -34,13 +32,10 @@ class IntroFragment : Fragment() {
 
     private lateinit var callback: IntroFragmentCallback
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        callback = (context as RootActivity)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.intro_fragment, container, false)
     }
 
@@ -81,12 +76,17 @@ class IntroFragment : Fragment() {
 
     private fun openDrawOverSettings() {
         if (Build.VERSION.SDK_INT >= 23 && !BarrierApplication.instance.canDrawOverApps()) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:${activity!!.packageName}"))
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:${activity!!.packageName}")
+            )
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY)
             startActivity(intent)
         } else {
-            callback.showSnackbar(ActionType.OPEN_DRAW_OVER_SETTINGS, getString(R.string.permission_already_granted))
+            callback.showSnackbar(
+                ActionType.OPEN_DRAW_OVER_SETTINGS,
+                getString(R.string.permission_already_granted)
+            )
         }
     }
 
@@ -96,7 +96,10 @@ class IntroFragment : Fragment() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY)
             startActivity(intent)
         } else {
-            callback.showSnackbar(ActionType.OPEN_ACCESSIBILITY_SETTINGS, getString(R.string.permission_already_granted))
+            callback.showSnackbar(
+                ActionType.OPEN_ACCESSIBILITY_SETTINGS,
+                getString(R.string.permission_already_granted)
+            )
         }
     }
 
@@ -117,8 +120,12 @@ class IntroFragment : Fragment() {
         val tutorials = ArrayList<IntroAction>()
 //        tutorials.add(IntroAction(R.string.tutorial_1, R.string.tutorial_1_desc,
 //                R.drawable.tutorial1, ActionType.OPEN_DRAW_OVER_SETTINGS))
-        tutorials.add(IntroAction(R.string.tutorial_2, R.string.tutorial_2_desc,
-                R.drawable.tutorial2, ActionType.OPEN_ACCESSIBILITY_SETTINGS))
+        tutorials.add(
+            IntroAction(
+                R.string.tutorial_2, R.string.tutorial_2_desc,
+                R.drawable.tutorial2, ActionType.OPEN_ACCESSIBILITY_SETTINGS
+            )
+        )
         return tutorials
     }
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import com.orhanobut.hawk.Hawk
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
+import timber.log.Timber
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.accessibility.BarrierAccessibilityService
 import workshop.akbolatss.tools.barrier.base.BaseFragment
@@ -32,18 +33,9 @@ class SettingsFragment(
 
     private val viewModel by lifecycleScope.viewModel<SettingsViewModel>(this)
 
-    private lateinit var callback: SettingsFragmentCallback
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is SettingsFragmentCallback)
-            callback = context
-        else
-            throw IllegalStateException("Caller must implement ${SettingsFragmentCallback::class.java.simpleName}")
-    }
-
     override fun init(savedInstanceState: Bundle?) {
         super.init(savedInstanceState)
+        Timber.d("init SettingsFragment")
         binding.viewModel = viewModel
         setDefault()
     }
@@ -78,7 +70,6 @@ class SettingsFragment(
     }
 
     private fun showPermissionSettings() {
-        callback.scrollView()
         val animationShake = AnimationUtils.loadAnimation(requireContext(), R.anim.anim_shake)
         binding.permInfo.startAnimation(animationShake)
     }
@@ -121,7 +112,7 @@ class SettingsFragment(
         }
 
         binding.btnEnterVFX.setOnClickListener {
-//            openSelectEnterVfx()
+            openSelectEnterVfx()
         }
         binding.btnIdleVFX.setOnClickListener {
 //            openSelectEnterVfx()
@@ -129,7 +120,7 @@ class SettingsFragment(
     }
 
     private fun openSelectEnterVfx() {
-
+        viewModel.openEnterVfxSelector()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -5,6 +5,7 @@ import workshop.akbolatss.tools.barrier.base.BaseViewModel
 import workshop.akbolatss.tools.barrier.base.resources.onSuccess
 import workshop.akbolatss.tools.barrier.domain.usecase.GetEnterVfxList
 import workshop.akbolatss.tools.barrier.domain.usecase.GetSelectedEnterVfx
+import workshop.akbolatss.tools.barrier.domain.usecase.OpenSettings
 import workshop.akbolatss.tools.barrier.domain.usecase.SelectEnterVfx
 
 class EnterVfxSelectViewModel(
@@ -43,6 +44,12 @@ class EnterVfxSelectViewModel(
                 .onSuccess {
                     loadList()
                 }
+        }
+    }
+
+    fun openSettings() {
+        executeUseCase { scope ->
+            interactor.openSettings(scope, OpenSettings.Params())
         }
     }
 

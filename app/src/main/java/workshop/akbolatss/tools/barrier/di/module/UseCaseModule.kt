@@ -14,14 +14,18 @@ val useCaseModule = module {
             getCloseOnActivationState = GetCloseOnActivationState(get()),
             toggleCloseOnActivation = ToggleCloseOnActivation(get()),
             getAccessibilityServiceState = GetAccessibilityServiceState(get()),
-            toggleAccessibilityService = ToggleAccessibilityService(get())
+            toggleAccessibilityService = ToggleAccessibilityService(get()),
+            openEnterVfxSelector = OpenEnterVfxSelector(get())
         )
     }
+
     factory {
         EnterVfxInteractors(
             getEnterVfxList = GetEnterVfxList(get()),
             getSelectedEnterVfx = GetSelectedEnterVfx(get()),
-            selectEnterVfx = SelectEnterVfx(get())
+            selectEnterVfx = SelectEnterVfx(get()),
+            openSettings = OpenSettings(get())
         )
     }
+
 }

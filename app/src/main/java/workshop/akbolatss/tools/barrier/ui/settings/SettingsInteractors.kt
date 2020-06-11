@@ -9,5 +9,6 @@ data class SettingsInteractors(
     val getCloseOnActivationState: GetCloseOnActivationState,
     val toggleCloseOnActivation: ToggleCloseOnActivation,
     val getAccessibilityServiceState: GetAccessibilityServiceState,
-    val toggleAccessibilityService: ToggleAccessibilityService
+    val toggleAccessibilityService: ToggleAccessibilityService,
+    val openEnterVfxSelector: OpenEnterVfxSelector
 )

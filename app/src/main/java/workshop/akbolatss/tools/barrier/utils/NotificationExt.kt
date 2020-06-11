@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_SECRET
 import workshop.akbolatss.tools.barrier.R
 import workshop.akbolatss.tools.barrier.accessibility.NotificationBroadcastReceiver
-import workshop.akbolatss.tools.barrier.ui.RootActivity
+import workshop.akbolatss.tools.barrier.ui.NavigationActivity
 import workshop.akbolatss.tools.barrier.utils.IntentKeys.Companion.INTENT_ACTION_TOGGLE
 import workshop.akbolatss.tools.barrier.utils.IntentKeys.Companion.INTENT_TOGGLE_BARRIER
 import workshop.akbolatss.tools.barrier.utils.NotificationKeys.Companion.NOTIFICATION_ID
@@ -92,7 +92,7 @@ object NotificationExt {
     }
 
     private fun getSettingsAction(context: Context): NotificationCompat.Action? {
-        val intent = Intent(context, RootActivity::class.java)
+        val intent = Intent(context, NavigationActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val builder = NotificationCompat.Action.Builder(
             R.drawable.ic_settings_24dp,

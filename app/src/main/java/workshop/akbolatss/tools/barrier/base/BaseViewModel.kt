@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import workshop.akbolatss.tools.barrier.base.resources.*
 
 abstract class BaseViewModel : ViewModel() {
@@ -23,11 +22,6 @@ abstract class BaseViewModel : ViewModel() {
 
     private val handleViewState: (ViewState) -> Unit = {
         _viewState.value = it
-    }
-
-    private val handleFailure: (Failure) -> Unit = {
-        Timber.e("ViewModel failure: ${it.errorMessage} by $it")
-        _failure.value = it
     }
 
     protected fun <T> executeUseCase(

@@ -16,9 +16,9 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment(), KoinComponent {
     protected abstract val layoutId: Int
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         init(inflater, container)
         init(savedInstanceState)

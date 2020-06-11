@@ -5,7 +5,7 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RootActivity">
+    tools:context=".ui.NavigationActivity">
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -28,7 +28,7 @@
                 android:textAppearance="@style/SingleLinePrimaryMediumText"
                 android:textSize="28sp" />
 
-            <FrameLayout
+            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
