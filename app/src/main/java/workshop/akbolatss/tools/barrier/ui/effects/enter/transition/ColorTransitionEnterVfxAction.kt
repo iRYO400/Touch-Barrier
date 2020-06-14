@@ -18,7 +18,7 @@ class ColorTransitionEnterVfxAction : IEnterVfxAction {
 
     private val argbAnimator = ValueAnimator.ofArgb(
         ContextCompat.getColor(context, R.color.transparent),
-        ContextCompat.getColor(context, R.color.black)
+        ContextCompat.getColor(context, R.color.colorBlack)
     ).apply {
         interpolator = AccelerateDecelerateInterpolator()
         duration = 1500

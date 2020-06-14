@@ -17,6 +17,7 @@ class EnterVfxRVA(
 
     companion object {
         const val SELECTED_ITEM_ID = "_selectedItemId"
+        const val REFRESH_SELECTED = "_refreshSelected"
     }
 
     var selectedItemId = -1
@@ -37,7 +38,7 @@ class EnterVfxRVA(
         if (payloads.isEmpty())
             super.onBindViewHolder(holder, position, payloads)
         else
-            bindWithPayload(holder, getItem(position), payloads)
+            bindWithPayload(holder, payloads)
     }
 
     override fun bind(holder: DataBoundViewHolder, item: IEnterVfx) {
@@ -56,17 +57,16 @@ class EnterVfxRVA(
 
     private fun bindWithPayload(
         holder: DataBoundViewHolder,
-        item: IEnterVfx,
         payloads: MutableList<Any>
     ) {
         with(holder.binding as ItemEnterVfxBinding) {
+            if (payloads.contains(REFRESH_SELECTED))
+                clRoot.isSelected = false
+
             if (payloads.contains(SELECTED_ITEM_ID))
-                root.isSelected = selectedItemId == item.id
-            else
-                root.isSelected = false
+                clRoot.isSelected = true
         }
     }
-
 }
 
 private val DIFF_CALLBACK: DiffUtil.ItemCallback<IEnterVfx> =

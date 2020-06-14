@@ -24,12 +24,11 @@ class EnterVfxSelectViewModel(
             interactor.getEnterVfxList(scope, GetEnterVfxList.Params())
                 .onSuccess {
                     enterVfxList.value = it
-                    loadSelected()
                 }
         }
     }
 
-    private fun loadSelected() {
+    fun loadSelected() {
         executeUseCase { scope ->
             interactor.getSelectedEnterVfx(scope, GetSelectedEnterVfx.Params())
                 .onSuccess {

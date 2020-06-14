@@ -45,12 +45,23 @@ class EnterVfxSelectFragment(
 
     private fun observeViewModel() {
         viewModel.enterVfxList.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+            adapter.submitList(it) {
+                viewModel.loadSelected()
+            }
         })
         viewModel.selectedEnterVfx.observe(viewLifecycleOwner, Observer {
-            adapter.selectedItemId = it.id
-            adapter.notifyItemRangeChanged(0, adapter.itemCount, EnterVfxRVA.SELECTED_ITEM_ID)
+            refreshSelected()
+            highlightSelected(it)
         })
+    }
+
+    private fun refreshSelected() {
+        adapter.notifyItemRangeChanged(0, adapter.itemCount, EnterVfxRVA.REFRESH_SELECTED)
+    }
+
+    private fun highlightSelected(iEnterVfx: IEnterVfx?) {
+        val selectedEnterVfxIndex = adapter.currentList.indexOf(iEnterVfx)
+        adapter.notifyItemChanged(selectedEnterVfxIndex, EnterVfxRVA.SELECTED_ITEM_ID)
     }
 
     private fun setListeners() {
@@ -58,5 +69,4 @@ class EnterVfxSelectFragment(
             viewModel.openSettings()
         }
     }
-
 }

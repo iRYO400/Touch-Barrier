@@ -11,12 +11,13 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:backgroundTint="@color/color_white_and_primary_50"
+        android:background="@drawable/bg_item_selectable"
         android:clickable="true"
         android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:paddingBottom="16dp">
 
         <TextView
